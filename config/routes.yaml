@@ -1,3 +1,12 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+users:
+    type: rest
+    prefix: api
+    resource: App\Controller\UserController
+
+security:
+    type: rest
+    prefix: api/authenticate
+    resource: App\Controller\SecurityController
