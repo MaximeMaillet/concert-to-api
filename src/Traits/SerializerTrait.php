@@ -5,8 +5,6 @@ namespace App\Traits;
 use App\Entity\User;
 use App\Services\ApiService;
 use Doctrine\Common\Annotations\AnnotationReader;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;

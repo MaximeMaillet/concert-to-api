@@ -1,42 +1,59 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: MaximeMaillet
- * Date: 21/05/2018
- * Time: 16:07
- */
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Traits\SerializerTrait;
+use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\FOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends Controller
+/**
+ * Class UserController
+ * @package App\Controller
+ */
+class UserController extends FOSRestController
 {
+    use SerializerTrait;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * UserController constructor.
+     * @param $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @IsGranted("ROLE_USER")
      * @param Request $request
+     * @return array|bool|float|int|object|string
      */
     public function getUsersAction(Request $request)
     {
-        return new JsonResponse([
-            'message' => 'ok'
-        ]);
+        $users = $this->entityManager
+            ->getRepository(User::class)
+            ->findBy(['isActive' => false])
+        ;
+
+        return $this->serialize($users);
     }
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @IsGranted("ROLE_USER")
+     * @param User $user
+     * @return array|bool|float|int|object|string
      */
-    public function getTestAction(Request $request)
+    public function getUserAction(Request $request, User $user)
     {
-        return new JsonResponse([
-            'message' => 'ok'
-        ]);
+        return $this->serialize($user);
     }
 }

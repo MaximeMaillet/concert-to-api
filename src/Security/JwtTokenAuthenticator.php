@@ -62,7 +62,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null)
     {
         return new JsonResponse([
-            'error' => 'auth required'
+            'error' => 'auth required FDP'
         ], 401);
     }
 
@@ -77,7 +77,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        // TODO: Implement supports() method.
+        return $request->headers->get('Authorization');
     }
 
     /**

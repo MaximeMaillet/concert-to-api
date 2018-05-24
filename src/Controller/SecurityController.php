@@ -4,23 +4,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Services\TransformerService;
 use App\Services\UserService;
 use App\Traits\SerializerTrait;
 use FOS\RestBundle\Controller\FOSRestController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use FOS\RestBundle\Controller\Annotations as Rest;
 
+/**
+ * Class SecurityController
+ * @package App\Controller
+ */
 class SecurityController extends FOSRestController
 {
     use SerializerTrait;
@@ -36,23 +32,16 @@ class SecurityController extends FOSRestController
     protected $passwordEncoder;
 
     /**
-     * @var TransformerService
-     */
-    protected $transformerService;
-
-    /**
      * SecurityController constructor.
      * @param UserService $userService
      * @param UserPasswordEncoderInterface $passwordEncoder
      */
     public function __construct(
         UserService $userService,
-        UserPasswordEncoderInterface $passwordEncoder,
-        TransformerService $transformerService
+        UserPasswordEncoderInterface $passwordEncoder
     ) {
         $this->userService = $userService;
         $this->passwordEncoder = $passwordEncoder;
-        $this->transformerService = $transformerService;
     }
 
     /**
