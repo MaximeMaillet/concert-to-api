@@ -108,17 +108,8 @@ class SecurityController extends FOSRestController
             $entityManager->flush();
 
             return $this->serialize($user);
-        } else {
-            $errors = [];
-            $formErr = $form->getErrors(true);
-
-            foreach($formErr as $key => $error) {
-                $errors[] = [
-                    'message' => $error->getMessage()
-                ];
-            }
-
-            return new JsonResponse($errors);
         }
+
+        return $this->renderFormErrors($form);
     }
 }

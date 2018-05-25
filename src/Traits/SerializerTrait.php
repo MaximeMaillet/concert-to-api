@@ -5,6 +5,8 @@ namespace App\Traits;
 use App\Entity\User;
 use App\Services\ApiService;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -12,6 +14,20 @@ use Symfony\Component\Serializer\Serializer;
 
 trait SerializerTrait
 {
+    public function renderFormErrors(FormInterface $form)
+    {
+        $errors = [];
+        $formErr = $form->getErrors(true);
+
+        foreach($formErr as $key => $error) {
+            $errors[] = [
+                'message' => $error->getMessage()
+            ];
+        }
+
+        return new JsonResponse($errors, 422);
+    }
+
     public function serialize($data, array $groups = [], int $status = 200, array $headers = [])
     {
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));

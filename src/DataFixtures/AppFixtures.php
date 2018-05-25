@@ -19,7 +19,6 @@ class AppFixtures extends Fixture
         $this->userService = $userService;
     }
 
-
     /**
      * Load data fixtures with the passed EntityManager
      *
@@ -28,10 +27,9 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $user = new User();
-        $user->setEmail('maxime.maillet93@gmail.com');
-        $user->setPlainPassword('21022102');
+        $user->setEmail('fakeUser'.mt_rand().'@test.fr');
+        $user->setPlainPassword('fakePassw08D');
         $user->setIsActive(true);
-//        $this->userService->createUser($user);
 
         $manager->persist($user);
         $manager->flush();
