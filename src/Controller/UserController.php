@@ -40,7 +40,7 @@ class UserController extends FOSRestController
     {
         $users = $this->entityManager
             ->getRepository(User::class)
-            ->findBy(['isActive' => false])
+            ->findBy(['isActive' => true])
         ;
 
         return $this->serialize($users);

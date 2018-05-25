@@ -30,8 +30,26 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
+        $this->addTestUsers($manager);
         $this->addAdmin($manager);
         $this->addSuperAdmin($manager);
+    }
+
+    protected function addTestUsers(ObjectManager $manager)
+    {
+        for ($i=0; $i<10; $i++) {
+            $user = (new User())
+                ->setEmail('maxime.maillet93+usertest'.mt_rand().'@gmail.com')
+                ->setPlainPassword('testpassword')
+                ->addRole(User::ROLE_USER)
+                ->setIsActive(true)
+            ;
+            $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($password);
+            $manager->persist($user);
+        }
+
+        $manager->flush();
     }
 
     protected function addAdmin(ObjectManager $manager)
