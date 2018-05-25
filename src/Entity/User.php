@@ -171,6 +171,15 @@ class User implements AdvancedUserInterface, \Serializable
         return in_array($role, $this->roles, true);
     }
 
+    public function addRole($role)
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
     /**
      * Returns the password used to authenticate the user.
      *

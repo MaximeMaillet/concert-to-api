@@ -23,8 +23,7 @@ class UserRepository extends ServiceEntityRepository
     {
         return $this->findOneBy([
             'email' => $email,
-            'isActive' => false,
-// @todo           'isActive' => true,
+            'isActive' => true,
         ]);
     }
 }
