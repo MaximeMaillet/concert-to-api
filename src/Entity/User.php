@@ -313,7 +313,7 @@ class User implements AdvancedUserInterface, \Serializable
     /**
      * @return mixed
      */
-    public function getIsActive()
+    public function isActive()
     {
         return $this->isActive;
     }

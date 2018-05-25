@@ -7,6 +7,7 @@ use App\Services\ApiService;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -26,6 +27,14 @@ trait SerializerTrait
         }
 
         return new JsonResponse($errors, 422);
+    }
+
+    public function deserialize($data, $class, $groups = [])
+    {
+        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        $normalizer = new ObjectNormalizer($classMetadataFactory);
+        $serializer = new Serializer([$normalizer], [new JsonEncoder()]);
+        return $serializer->deserialize($data, $class, 'json');
     }
 
     public function serialize($data, array $groups = [], int $status = 200, array $headers = [])
