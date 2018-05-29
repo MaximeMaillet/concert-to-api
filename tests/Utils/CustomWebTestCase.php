@@ -30,4 +30,13 @@ class CustomWebTestCase extends WebTestCase
         $kernel->boot();
         return $kernel->getContainer()->get($id);
     }
+
+    protected function getCorrectEmail($prefix, $noRandom = null)
+    {
+        if (!$noRandom) {
+            $noRandom = mt_rand();
+        }
+        $arEmail = explode('@', getenv('BASE_EMAIL_TO_SEND'));
+        return $arEmail[0].'+'.$prefix.$noRandom.'@'.$arEmail[1];
+    }
 }

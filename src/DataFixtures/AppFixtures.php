@@ -37,9 +37,10 @@ class AppFixtures extends Fixture
 
     protected function addTestUsers(ObjectManager $manager)
     {
+        $arEmail = explode('@', getenv('BASE_EMAIL_TO_SEND'));
         for ($i=0; $i<10; $i++) {
             $user = (new User())
-                ->setEmail('maxime.maillet93+usertest'.mt_rand().'@gmail.com')
+                ->setEmail($arEmail[0].'+usertest'.mt_rand().'@'.$arEmail[1])
                 ->setPlainPassword('testpassword')
                 ->addRole(User::ROLE_USER)
                 ->setIsActive(true)

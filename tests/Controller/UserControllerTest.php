@@ -35,7 +35,7 @@ class UserControllerTest extends CustomWebTestCase
 
     protected function setUp()
     {
-        $this->credentials['email'] = 'maxime.maillet93+userControllerTest'.mt_rand().'@gmail.com';
+        $this->credentials['email'] = $this->getCorrectEmail('userControllerTest');
         $this->credentials['password'] = 'testuser';
 
         parent::setUp();
@@ -76,6 +76,7 @@ class UserControllerTest extends CustomWebTestCase
             ]
         );
 
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
         /** @var User $user */
         $user = $this->deserialize($client->getResponse()->getContent(), User::class);
 
@@ -98,7 +99,147 @@ class UserControllerTest extends CustomWebTestCase
             ]
         );
 
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $users = json_decode($client->getResponse()->getContent(), true);
         $this->assertTrue(is_array($users));
+    }
+
+    public function testGetUserAsNotConnected()
+    {
+        $client = static::createClient();
+        $client->request(
+            'GET',
+            self::get('router')->generate('get_user', [
+                'user' => $this->user->getId(),
+            ]),
+            [],
+            []
+        );
+
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    public function testGetUsersAsNotConnected()
+    {
+        $client = static::createClient();
+        $client->request(
+            'GET',
+            self::get('router')->generate('get_users', [
+                'user' => $this->user->getId(),
+            ]),
+            [],
+            []
+        );
+
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+        $users = json_decode($client->getResponse()->getContent(), true);
+        $this->assertTrue(is_array($users));
+    }
+
+    public function testPatchUserAsAdmin()
+    {
+        $client = static::createClient();
+        $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
+        /** @var User $admin */
+        $admin = $userRepository->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
+
+        $client = static::createClient();
+        $changeEmail = $this->getCorrectEmail('otheremail');
+        $client->request(
+            'PATCH',
+            self::get('router')->generate('patch_user', [
+                'user' => $this->user->getId(),
+            ]),
+            [
+                'email' => $changeEmail,
+                'isActive' => true,
+            ],
+            [
+                'Authorization' => 'Bearer '.$this->login($admin)
+            ]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $user = $userRepository->findOneBy(['id' => $this->user->getId()]);
+        $this->assertEquals($changeEmail, $user->getEmail());
+        $this->assertTrue($user->isActive());
+    }
+
+    public function testPatchUserAsNotConnected()
+    {
+        $client = static::createClient();
+        $changeEmail = $this->getCorrectEmail('otheremail');
+        $client->request(
+            'PATCH',
+            self::get('router')->generate('patch_user', [
+                'user' => $this->user->getId(),
+            ]),
+            [
+                'email' => $changeEmail,
+                'isActive' => true,
+            ]
+        );
+
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    public function testPatchUserAsOtherUser()
+    {
+        $client = static::createClient();
+        $changeEmail = $this->getCorrectEmail('otheremail');
+
+        $user = $client->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->where('u.id != :id')
+            ->setParameter('id', $this->user->getId())
+            ->andWhere('u.roles NOT LIKE :roles')
+            ->setParameter('roles', '%ROLE_ADMIN%')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getResult()
+        ;
+
+        $client->request(
+            'PATCH',
+            self::get('router')->generate('patch_user', [
+                'user' => $this->user->getId(),
+            ]),
+            [
+                'email' => $changeEmail,
+                'isActive' => true,
+            ],
+            [
+                'Authorization' => 'Bearer '.$this->login($user)
+            ]
+        );
+
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
+
+    public function testPatchUserAsMe()
+    {
+        $client = static::createClient();
+        $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
+
+        $changeEmail = $this->getCorrectEmail('otheremail');
+        $client->request(
+            'PATCH',
+            self::get('router')->generate('patch_user', [
+                'user' => $this->user->getId(),
+            ]),
+            [
+                'email' => $changeEmail,
+                'isActive' => true,
+            ],
+            [
+                'Authorization' => 'Bearer '.$this->login($this->user)
+            ]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $user = $userRepository->findOneBy(['id' => $this->user->getId()]);
+        $this->assertEquals($changeEmail, $user->getEmail());
+        $this->assertTrue($user->isActive());
     }
 }
