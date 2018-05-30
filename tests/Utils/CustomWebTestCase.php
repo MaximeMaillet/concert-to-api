@@ -14,12 +14,26 @@ class CustomWebTestCase extends WebTestCase
         static::bootKernel();
     }
 
+    /**
+     * @deprecated use getAuthorization instead of
+     * @param User $user
+     * @return string
+     */
     protected function login(User $user)
     {
         /** @var JWTManager $jwtManager */
         $jwtManager = self::get('lexik_jwt_authentication.jwt_manager');
 
         return $jwtManager->create($user);
+    }
+
+    protected function getAuthorization(User $user)
+    {
+        /** @var JWTManager $jwtManager */
+        $jwtManager = self::get('lexik_jwt_authentication.jwt_manager');
+        $token = $jwtManager->create($user);
+
+        return 'Bearer '.$token;
     }
 
     protected function get($id)

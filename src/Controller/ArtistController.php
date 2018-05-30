@@ -97,7 +97,7 @@ class ArtistController extends FOSRestController
      * @param Request $request
      * @return array|bool|float|int|object|string|\Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function putArtistAction(Request $request)
+    public function putArtistsAction(Request $request)
     {
         $artist = new Artist();
         $form = $this->createForm(ArtistType::class, $artist, ['method' => 'PATCH']);

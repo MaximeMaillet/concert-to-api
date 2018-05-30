@@ -15,3 +15,8 @@ artists:
     type: rest
     prefix: api
     resource: App\Controller\ArtistController
+
+locations:
+    type: rest
+    prefix: api
+    resource: App\Controller\LocationController

@@ -67,6 +67,20 @@ class Location
     protected $longitude;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"auth"})
+     */
+    protected $validated;
+
+    /**
+     * Location constructor.
+     */
+    public function __construct()
+    {
+        $this->validated = false;
+    }
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -96,7 +110,7 @@ class Location
      * @param mixed $name
      * @return Location
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
         return $this;
@@ -114,7 +128,7 @@ class Location
      * @param mixed $address
      * @return Location
      */
-    public function setAddress($address)
+    public function setAddress(string $address)
     {
         $this->address = $address;
         return $this;
@@ -132,7 +146,7 @@ class Location
      * @param mixed $postal_code
      * @return Location
      */
-    public function setPostalCode($postal_code)
+    public function setPostalCode(string $postal_code)
     {
         $this->postal_code = $postal_code;
         return $this;
@@ -150,7 +164,7 @@ class Location
      * @param mixed $city
      * @return Location
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
         return $this;
@@ -168,7 +182,7 @@ class Location
      * @param mixed $country
      * @return Location
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
         return $this;
@@ -186,7 +200,7 @@ class Location
      * @param mixed $latitude
      * @return Location
      */
-    public function setLatitude($latitude)
+    public function setLatitude(float $latitude)
     {
         $this->latitude = $latitude;
         return $this;
@@ -204,9 +218,27 @@ class Location
      * @param mixed $longitude
      * @return Location
      */
-    public function setLongitude($longitude)
+    public function setLongitude(float $longitude)
     {
         $this->longitude = $longitude;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValidated() : bool
+    {
+        return $this->validated;
+    }
+
+    /**
+     * @param bool $validated
+     * @return Location
+     */
+    public function setValidated(bool $validated)
+    {
+        $this->validated = $validated;
         return $this;
     }
 }
