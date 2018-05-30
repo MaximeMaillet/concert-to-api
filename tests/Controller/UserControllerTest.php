@@ -154,8 +154,9 @@ class UserControllerTest extends CustomWebTestCase
                 'email' => $changeEmail,
                 'isActive' => true,
             ],
+            [],
             [
-                'Authorization' => 'Bearer '.$this->login($admin)
+                'HTTP_Authorization' => 'Bearer '.$this->login($admin)
             ]
         );
 
@@ -197,7 +198,7 @@ class UserControllerTest extends CustomWebTestCase
             ->setParameter('roles', '%ROLE_ADMIN%')
             ->getQuery()
             ->setMaxResults(1)
-            ->getResult()
+            ->getOneOrNullResult()
         ;
 
         $client->request(
@@ -209,12 +210,13 @@ class UserControllerTest extends CustomWebTestCase
                 'email' => $changeEmail,
                 'isActive' => true,
             ],
+            [],
             [
-                'Authorization' => 'Bearer '.$this->login($user)
+                'HTTP_Authorization' => 'Bearer '.$this->login($user)
             ]
         );
 
-        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
     }
 
     public function testPatchUserAsMe()
@@ -232,8 +234,9 @@ class UserControllerTest extends CustomWebTestCase
                 'email' => $changeEmail,
                 'isActive' => true,
             ],
+            [],
             [
-                'Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
             ]
         );
 

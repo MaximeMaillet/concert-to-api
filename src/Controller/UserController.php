@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Traits\SerializerTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\FOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class UserController
@@ -23,12 +26,21 @@ class UserController extends FOSRestController
     protected $entityManager;
 
     /**
-     * UserController constructor.
-     * @param $entityManager
+     * @var AuthorizationCheckerInterface
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    protected $authorizationChecker;
+
+    /**
+     * UserController constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        AuthorizationCheckerInterface $authorizationChecker
+    ) {
         $this->entityManager = $entityManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -55,5 +67,31 @@ class UserController extends FOSRestController
     public function getUserAction(Request $request, User $user)
     {
         return $this->serialize($user);
+    }
+
+    /**
+     * @param Request $request
+     * @IsGranted("ROLE_USER")
+     * @param User $user
+     * @return array|object|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function patchUserAction(Request $request, User $user)
+    {
+        if (!$this->authorizationChecker->isGranted(User::ROLE_ADMIN) && $user->getId() !== $this->getUser()->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(UserType::class, $user, ['method' => 'PATCH']);
+        try {
+            $form->submit($request->request->all(), false);
+        } catch(AlreadySubmittedException $e) {
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+            return $this->serialize($user);
+        }
+
+        return $this->renderFormErrors($form);
     }
 }
