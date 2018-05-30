@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class UserControllerTest
  * @package App\Tests\Controller
  */
-class UserControllerTest extends CustomWebTestCase
+class UserControllerTests extends CustomWebTestCase
 {
     use SerializerTrait;
 
