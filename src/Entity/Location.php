@@ -110,7 +110,7 @@ class Location
      * @param mixed $name
      * @return Location
      */
-    public function setName(string $name)
+    public function setName(?string $name)
     {
         $this->name = $name;
         return $this;
@@ -128,7 +128,7 @@ class Location
      * @param mixed $address
      * @return Location
      */
-    public function setAddress(string $address)
+    public function setAddress(?string $address)
     {
         $this->address = $address;
         return $this;
@@ -146,7 +146,7 @@ class Location
      * @param mixed $postal_code
      * @return Location
      */
-    public function setPostalCode(string $postal_code)
+    public function setPostalCode(?string $postal_code)
     {
         $this->postal_code = $postal_code;
         return $this;
@@ -164,7 +164,7 @@ class Location
      * @param mixed $city
      * @return Location
      */
-    public function setCity(string $city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
         return $this;
@@ -182,7 +182,7 @@ class Location
      * @param mixed $country
      * @return Location
      */
-    public function setCountry(string $country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
         return $this;
@@ -200,7 +200,7 @@ class Location
      * @param mixed $latitude
      * @return Location
      */
-    public function setLatitude(float $latitude)
+    public function setLatitude(?float $latitude)
     {
         $this->latitude = $latitude;
         return $this;
@@ -218,7 +218,7 @@ class Location
      * @param mixed $longitude
      * @return Location
      */
-    public function setLongitude(float $longitude)
+    public function setLongitude(?float $longitude)
     {
         $this->longitude = $longitude;
         return $this;

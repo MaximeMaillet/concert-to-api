@@ -68,7 +68,7 @@ class LocationControllerTests extends CustomWebTestCase
         $this->assertEquals($exactLocation->getPostalCode(), $location->getPostalCode());
         $this->assertEquals($exactLocation->getLatitude(), $location->getLatitude());
         $this->assertEquals($exactLocation->getLongitude(), $location->getLongitude());
-        $this->assertTrue($location->isValidated());
+        $this->assertEquals($exactLocation->isValidated(), $location->isValidated());
     }
 
     public function testGetValidLocationAsAdmin()
@@ -265,7 +265,7 @@ class LocationControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => $this->getAuthorization($this->admin)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -324,6 +324,7 @@ class LocationControllerTests extends CustomWebTestCase
                 'name' => $locationToCheck->getName(),
                 'address' => $locationToCheck->getAddress(),
                 'city' => $locationToCheck->getCity(),
+                'postalCode' => $locationToCheck->getPostalCode(),
                 'country' => $locationToCheck->getCountry(),
                 'latitude' => $locationToCheck->getLatitude(),
                 'longitude' => $locationToCheck->getLongitude(),
@@ -367,6 +368,7 @@ class LocationControllerTests extends CustomWebTestCase
                 'name' => $locationToCheck->getName(),
                 'address' => $locationToCheck->getAddress(),
                 'city' => $locationToCheck->getCity(),
+                'postalCode' => $locationToCheck->getPostalCode(),
                 'country' => $locationToCheck->getCountry(),
                 'latitude' => $locationToCheck->getLatitude(),
                 'longitude' => $locationToCheck->getLongitude(),
@@ -409,6 +411,7 @@ class LocationControllerTests extends CustomWebTestCase
                 'name' => $locationToCheck->getName(),
                 'address' => $locationToCheck->getAddress(),
                 'city' => $locationToCheck->getCity(),
+                'postalCode' => $locationToCheck->getPostalCode(),
                 'country' => $locationToCheck->getCountry(),
                 'latitude' => $locationToCheck->getLatitude(),
                 'longitude' => $locationToCheck->getLongitude(),
@@ -444,6 +447,7 @@ class LocationControllerTests extends CustomWebTestCase
                 'address' => $locationToCheck->getAddress(),
                 'city' => $locationToCheck->getCity(),
                 'country' => $locationToCheck->getCountry(),
+                'postalCode' => $locationToCheck->getPostalCode(),
                 'latitude' => $locationToCheck->getLatitude(),
                 'longitude' => $locationToCheck->getLongitude(),
                 'validated' => $locationToCheck->isValidated(),
@@ -456,9 +460,7 @@ class LocationControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        /** @var Location $location */
-        $location = $this->deserialize($client->getResponse()->getContent(), Location::class);
-        $this->checkLocationAssert($client->getResponse()->getContent(), $location);
+        $this->checkLocationAssert($client->getResponse()->getContent(), $locationToCheck);
     }
 
     public function testPutLocationAsConnected()
@@ -482,6 +484,7 @@ class LocationControllerTests extends CustomWebTestCase
                 'name' => $locationToCheck->getName(),
                 'address' => $locationToCheck->getAddress(),
                 'city' => $locationToCheck->getCity(),
+                'postalCode' => $locationToCheck->getPostalCode(),
                 'country' => $locationToCheck->getCountry(),
                 'latitude' => $locationToCheck->getLatitude(),
                 'longitude' => $locationToCheck->getLongitude(),
@@ -494,9 +497,7 @@ class LocationControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        /** @var Location $location */
-        $location = $this->deserialize($client->getResponse()->getContent(), Location::class);
-        $this->checkLocationAssert($client->getResponse()->getContent(), $location);
+        $this->checkLocationAssert($client->getResponse()->getContent(), $locationToCheck);
     }
 
     public function testPutLocationAsNotConnected()

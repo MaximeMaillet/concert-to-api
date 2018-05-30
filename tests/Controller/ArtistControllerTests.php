@@ -245,7 +245,7 @@ class ArtistControllerTests extends CustomWebTestCase
 
         $client->request(
             'PUT',
-            self::get('router')->generate('put_artist'),
+            self::get('router')->generate('put_artists'),
             [
                 'name' => 'NouveauName',
                 'logo' => 'NewLogo',
@@ -281,7 +281,7 @@ class ArtistControllerTests extends CustomWebTestCase
 
         $client->request(
             'PUT',
-            self::get('router')->generate('put_artist'),
+            self::get('router')->generate('put_artists'),
             [
                 'name' => 'NouveauName',
                 'logo' => 'NewLogo'
@@ -315,7 +315,7 @@ class ArtistControllerTests extends CustomWebTestCase
 
         $client->request(
             'PUT',
-            self::get('router')->generate('put_artist'),
+            self::get('router')->generate('put_artists'),
             [
                 'name' => 'NouveauName',
                 'logo' => 'NewLogo'
