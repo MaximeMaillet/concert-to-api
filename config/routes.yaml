@@ -10,3 +10,8 @@ security:
     type: rest
     prefix: api/authenticate
     resource: App\Controller\SecurityController
+
+artists:
+    type: rest
+    prefix: api
+    resource: App\Controller\ArtistController

@@ -35,6 +35,12 @@ class Artist
     protected $logo;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"auth"})
+     */
+    protected $validated;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", cascade={"persist"})
      * @ORM\JoinTable(
      *      name="artist_events",
@@ -51,6 +57,7 @@ class Artist
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->validated = false;
     }
 
     /**
@@ -122,6 +129,24 @@ class Artist
     public function setEvents($events)
     {
         $this->events = $events;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isValidated()
+    {
+        return $this->validated;
+    }
+
+    /**
+     * @param mixed $validated
+     * @return $this
+     */
+    public function setValidated($validated)
+    {
+        $this->validated = $validated;
         return $this;
     }
 }

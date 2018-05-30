@@ -15,6 +15,11 @@ use Symfony\Component\Serializer\Serializer;
 
 trait SerializerTrait
 {
+    public function renderBoolean($valid)
+    {
+        return new JsonResponse(['success' => $valid], 200);
+    }
+
     public function renderFormErrors(FormInterface $form)
     {
         $errors = [];
