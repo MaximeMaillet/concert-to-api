@@ -20,3 +20,8 @@ locations:
     type: rest
     prefix: api
     resource: App\Controller\LocationController
+
+events:
+    type: rest
+    prefix: api
+    resource: App\Controller\EventController

@@ -16,7 +16,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
-     * @Groups({"auth", "noauth"})
+     * @Groups({"auth"})
      */
     protected $id;
 
@@ -34,16 +34,16 @@ class Event
     protected $hash;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=false)
      * @Groups({"auth"})
      */
-    protected $date_start;
+    protected $dateStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"auth"})
      */
-    protected $date_end;
+    protected $dateEnd;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Location", fetch="EAGER")
@@ -51,6 +51,14 @@ class Event
      * @Groups({"auth"})
      */
     protected $location;
+
+    /**
+     * Event constructor.
+     */
+    public function __construct()
+    {
+        $this->dateStart = new \DateTime();
+    }
 
     /**
      * @return mixed
@@ -111,16 +119,16 @@ class Event
      */
     public function getDateStart()
     {
-        return $this->date_start;
+        return $this->dateStart;
     }
 
     /**
-     * @param mixed $date_start
+     * @param mixed $dateStart
      * @return Event
      */
-    public function setDateStart($date_start)
+    public function setDateStart(\DateTime $dateStart)
     {
-        $this->date_start = $date_start;
+        $this->dateStart = $dateStart;
         return $this;
     }
 
@@ -129,16 +137,16 @@ class Event
      */
     public function getDateEnd()
     {
-        return $this->date_end;
+        return $this->dateEnd;
     }
 
     /**
-     * @param mixed $date_end
+     * @param mixed $dateEnd
      * @return Event
      */
-    public function setDateEnd($date_end)
+    public function setDateEnd($dateEnd)
     {
-        $this->date_end = $date_end;
+        $this->dateEnd = $dateEnd;
         return $this;
     }
 
