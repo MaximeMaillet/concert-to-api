@@ -1,17 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: MaximeMaillet
- * Date: 30/05/2018
- * Time: 08:38
- */
 
 namespace App\Form;
 
 use App\Entity\Artist;
+use App\Entity\Event;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,7 +35,14 @@ class ArtistType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('logo', TextType::class)
+            ->add('logo', TextType::class, [
+                'required' => false,
+            ])
+            ->add('events', CollectionType::class, [
+                'required' => false,
+                'entry_type' => EventType::class,
+                'allow_add' => true,
+            ])
         ;
 
         if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
