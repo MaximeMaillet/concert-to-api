@@ -41,9 +41,9 @@ class Artist
     protected $validated;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="artists", cascade={"persist"})
      * @ORM\JoinTable(
-     *      name="artist_events",
+     *      name="artists_events",
      *      joinColumns={@ORM\JoinColumn(name="artist_id", referencedColumnName="id", onDelete="cascade")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id", onDelete="cascade")}
      * )
@@ -129,6 +129,34 @@ class Artist
     public function setEvents($events)
     {
         $this->events = $events;
+        return $this;
+    }
+
+    /**
+     * @param Event $event
+     * @return $this
+     */
+    public function addEvent(Event $event)
+    {
+        if (!$this->events->contains($event)) {
+            $event->addArtist($this);
+            $this->events->add($event);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Event $event
+     * @return $this
+     */
+    public function removeEvent(Event $event)
+    {
+        if ($this->events->contains($event)) {
+            $event->removeArtist($this);
+            $this->events->remove($event);
+        }
+
         return $this;
     }
 

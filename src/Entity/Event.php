@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,11 +54,18 @@ class Event
     protected $location;
 
     /**
+     * @var ArrayCollection|Artist[]
+     * @ORM\ManyToMany(targetEntity="App\Entity\Artist", mappedBy="events")
+     */
+    protected $artists;
+
+    /**
      * Event constructor.
      */
     public function __construct()
     {
         $this->dateStart = new \DateTime();
+        $this->artists = new ArrayCollection();
     }
 
     /**
@@ -166,5 +174,48 @@ class Event
     {
         $this->location = $location;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getArtists()
+    {
+        return $this->artists;
+    }
+
+    /**
+     * @param mixed $artists
+     * @return Event
+     */
+    public function setArtists($artists)
+    {
+        $this->artists = $artists;
+        return $this;
+    }
+
+    /**
+     * @param Artist $artist
+     * @return $this
+     */
+    public function addArtist(Artist $artist)
+    {
+        if (!$this->artists->contains($artist)) {
+            $artist->addEvent($this);
+            $this->artists->add($artist);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Artist $artist
+     */
+    public function removeArtist(Artist $artist)
+    {
+        if ($this->artists->contains($artist)) {
+            $artist->removeEvent($this);
+            $this->artists->remove($artist);
+        }
     }
 }
