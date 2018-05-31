@@ -30,21 +30,6 @@ class LocationControllerTests extends CustomWebTestCase
     protected function setUp()
     {
         parent::setUp();
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::get('doctrine.orm.entity_manager');
-        $this->admin = $entityManager->getRepository(User::class)
-            ->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
-
-        $this->user = $entityManager
-            ->getRepository(User::class)
-            ->createQueryBuilder('u')
-            ->where('u.roles NOT LIKE :roles')
-            ->setParameter('roles', '%ROLE_ADMIN%')
-            ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
-        ;
-
         $this->location = (new Location())
             ->setName('MyLoc'.mt_rand())
             ->setCity('City'.mt_rand())

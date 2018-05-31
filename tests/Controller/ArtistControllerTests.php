@@ -13,27 +13,9 @@ class ArtistControllerTests extends CustomWebTestCase
 {
     use SerializerTrait;
 
-    protected $admin;
-
-    protected $user;
-
     protected function setUp()
     {
         parent::setUp();
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::get('doctrine.orm.entity_manager');
-        $this->admin = $entityManager->getRepository(User::class)
-            ->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
-
-        $this->user = $entityManager
-            ->getRepository(User::class)
-            ->createQueryBuilder('u')
-            ->where('u.roles NOT LIKE :roles')
-            ->setParameter('roles', '%ROLE_ADMIN%')
-            ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
-        ;
     }
 
     public function testGetArtistActionAsConnected()
@@ -53,7 +35,7 @@ class ArtistControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -81,7 +63,7 @@ class ArtistControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -126,7 +108,7 @@ class ArtistControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -172,7 +154,7 @@ class ArtistControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->admin)
+                'HTTP_Authorization' => $this->getAuthorization($this->admin)
             ]
         );
 
@@ -206,7 +188,7 @@ class ArtistControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -253,7 +235,7 @@ class ArtistControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->admin)
+                'HTTP_Authorization' => $this->getAuthorization($this->admin)
             ]
         );
 
@@ -288,7 +270,7 @@ class ArtistControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -342,7 +324,7 @@ class ArtistControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->admin)
+                'HTTP_Authorization' => $this->getAuthorization($this->admin)
             ]
         );
 
@@ -367,7 +349,7 @@ class ArtistControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 

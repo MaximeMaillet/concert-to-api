@@ -18,47 +18,14 @@ class UserControllerTests extends CustomWebTestCase
 {
     use SerializerTrait;
 
-    /**
-     * @var array
-     */
-    protected $credentials = [];
-
-    /**
-     * @var User
-     */
-    protected $user;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     protected function setUp()
     {
-        $this->credentials['email'] = $this->getCorrectEmail('userControllerTest');
-        $this->credentials['password'] = 'testuser';
-
         parent::setUp();
-
-        $entityManager = self::get('doctrine.orm.entity_manager');
-        $passwordEncoder = self::get('security.password_encoder');
-
-        $this->user = (new User())
-            ->setEmail($this->credentials['email'])
-            ->setPlainPassword($this->credentials['password'])
-            ->addRole(User::ROLE_USER)
-            ->setIsActive(true)
-        ;
-        $password = $passwordEncoder->encodePassword($this->user, $this->user->getPlainPassword());
-        $this->user->setPassword($password);
-        $entityManager->persist($this->user);
-        $entityManager->flush();
     }
 
     protected function tearDown()
     {
         parent::tearDown();
-        $this->user = null;
     }
 
     public function testGetUser()
@@ -72,7 +39,7 @@ class UserControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -95,7 +62,7 @@ class UserControllerTests extends CustomWebTestCase
             [],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 
@@ -140,8 +107,6 @@ class UserControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
-        /** @var User $admin */
-        $admin = $userRepository->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
 
         $client = static::createClient();
         $changeEmail = $this->getCorrectEmail('otheremail');
@@ -156,7 +121,7 @@ class UserControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($admin)
+                'HTTP_Authorization' => $this->getAuthorization($this->admin)
             ]
         );
 
@@ -212,7 +177,7 @@ class UserControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($user)
+                'HTTP_Authorization' => $this->getAuthorization($user)
             ]
         );
 
@@ -236,7 +201,7 @@ class UserControllerTests extends CustomWebTestCase
             ],
             [],
             [
-                'HTTP_Authorization' => 'Bearer '.$this->login($this->user)
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
             ]
         );
 

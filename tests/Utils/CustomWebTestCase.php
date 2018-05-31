@@ -25,6 +25,25 @@ class CustomWebTestCase extends WebTestCase
         static::bootKernel();
     }
 
+    protected function setUp()
+    {
+        parent::setUp();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::get('doctrine.orm.entity_manager');
+        $this->admin = $entityManager->getRepository(User::class)
+            ->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
+
+        $this->user = $entityManager
+            ->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->where('u.roles NOT LIKE :roles')
+            ->setParameter('roles', '%ROLE_ADMIN%')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
     /**
      * @deprecated use getAuthorization instead of
      * @param User $user
@@ -63,24 +82,5 @@ class CustomWebTestCase extends WebTestCase
         }
         $arEmail = explode('@', getenv('BASE_EMAIL_TO_SEND'));
         return $arEmail[0].'+'.$prefix.$noRandom.'@'.$arEmail[1];
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::get('doctrine.orm.entity_manager');
-        $this->admin = $entityManager->getRepository(User::class)
-            ->findOneBy(['email' => getenv('USER_ADMIN_EMAIL')]);
-
-        $this->user = $entityManager
-            ->getRepository(User::class)
-            ->createQueryBuilder('u')
-            ->where('u.roles NOT LIKE :roles')
-            ->setParameter('roles', '%ROLE_ADMIN%')
-            ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
-        ;
     }
 }
