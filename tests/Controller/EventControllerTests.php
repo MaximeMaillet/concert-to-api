@@ -46,7 +46,7 @@ class EventControllerTests extends CustomWebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         /** @var Event $event */
-        $event = $this->deserialize($client->getResponse()->getContent(), Event::class);
+        $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
 
         $this->assertEquals($this->event->getName(), $event->getName());
         $this->assertEquals($this->event->getDateStart()->format(\DateTime::ATOM), $event->getDateStart()->format(\DateTime::ATOM));
@@ -126,7 +126,7 @@ class EventControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         /** @var Event $event */
-        $event = $this->deserialize($client->getResponse()->getContent(), Event::class);
+        $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
 
         $this->assertEquals($name, $event->getName());
         $this->assertEquals((new \DateTime($dateStart))->format(\DateTime::ATOM), $event->getDateStart()->format(\DateTime::ATOM));
@@ -168,7 +168,7 @@ class EventControllerTests extends CustomWebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         /** @var Event $event */
-        $event = $this->deserialize($client->getResponse()->getContent(), Event::class);
+        $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
 
         $this->assertEquals('OtherEvent', $event->getName());
         $this->assertEquals('2018-05-23T19:33:07+00:00', $event->getDateStart()->format(\DateTime::ATOM));

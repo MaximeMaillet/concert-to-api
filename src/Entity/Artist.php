@@ -139,7 +139,7 @@ class Artist
     public function addEvent(Event $event)
     {
         if (!$this->events->contains($event)) {
-            $event->addArtist($this);
+//            $event->addArtist($this);
             $this->events->add($event);
         }
 
@@ -153,7 +153,7 @@ class Artist
     public function removeEvent(Event $event)
     {
         if ($this->events->contains($event)) {
-            $event->removeArtist($this);
+//            $event->removeArtist($this);
             $this->events->remove($event);
         }
 

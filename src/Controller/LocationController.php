@@ -49,7 +49,7 @@ class LocationController extends FOSRestController
             throw $this->createNotFoundException();
         }
 
-        return $this->serialize($location);
+        return $this->normalize($location);
     }
 
     public function getLocationsAction(Request $request)
@@ -57,9 +57,9 @@ class LocationController extends FOSRestController
         $locationRepository = $this->entityManager->getRepository(Location::class);
 
         if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
-            return $this->serialize($locationRepository->findAll());
+            return $this->normalize($locationRepository->findAll());
         } else {
-            return $this->serialize($locationRepository->findBy(['validated' => true]));
+            return $this->normalize($locationRepository->findBy(['validated' => true]));
         }
     }
 
@@ -78,7 +78,7 @@ class LocationController extends FOSRestController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            return $this->serialize($location);
+            return $this->normalize($location);
         }
 
         return $this->renderFormErrors($form);
@@ -97,7 +97,7 @@ class LocationController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($location);
             $this->entityManager->flush();
-            return $this->serialize($location);
+            return $this->normalize($location);
         }
 
         return $this->renderFormErrors($form);

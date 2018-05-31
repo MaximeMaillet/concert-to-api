@@ -3,9 +3,14 @@
 namespace App\Tests\Utils;
 
 use App\Entity\User;
+use App\Normalizer\EventNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class CustomWebTestCase extends WebTestCase
 {
@@ -66,6 +71,10 @@ class CustomWebTestCase extends WebTestCase
         return 'Bearer '.$token;
     }
 
+    /**
+     * @param $id
+     * @return object
+     */
     protected function get($id)
     {
         $kernel = $this->createKernel([
@@ -75,6 +84,11 @@ class CustomWebTestCase extends WebTestCase
         return $kernel->getContainer()->get($id);
     }
 
+    /**
+     * @param $prefix
+     * @param null $noRandom
+     * @return string
+     */
     protected function getCorrectEmail($prefix, $noRandom = null)
     {
         if (!$noRandom) {
@@ -83,4 +97,32 @@ class CustomWebTestCase extends WebTestCase
         $arEmail = explode('@', getenv('BASE_EMAIL_TO_SEND'));
         return $arEmail[0].'+'.$prefix.$noRandom.'@'.$arEmail[1];
     }
+
+    /**
+     * @param $json
+     * @param $entity
+     * @return array
+     */
+    protected function jsonToEntity($json, $entity, $groups = [])
+    {
+        $encoders = array(new JsonEncoder());
+//        $normalizers = array(new ObjectNormalizer());
+        $serializer = new Serializer([
+            new EventNormalizer(),
+            new ObjectNormalizer(),
+        ], $encoders);
+
+        $objectJson = json_decode($json);
+        if (is_array($objectJson)) {
+            $arrayReturn = [];
+            foreach ($objectJson as $class) {
+                $arrayReturn[] = $serializer->deserialize(json_encode($class), $entity, 'json');
+            }
+
+            return $arrayReturn;
+        }
+
+        return $serializer->deserialize($json, $entity, 'json', ['groups' => $groups]);
+    }
+
 }

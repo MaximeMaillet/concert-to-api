@@ -74,7 +74,7 @@ class SecurityController extends FOSRestController
         $token = $this->get('lexik_jwt_authentication.encoder')
             ->encode(
                 array_merge(
-                    $this->serialize($user, ['auth']),
+                    $this->normalize($user, ['auth']),
                     ['exp' => time() + 3600]
                 )
             );
@@ -107,7 +107,7 @@ class SecurityController extends FOSRestController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->serialize($user);
+            return $this->normalize($user);
         }
 
         return $this->renderFormErrors($form);

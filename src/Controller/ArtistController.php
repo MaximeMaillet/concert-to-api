@@ -12,6 +12,10 @@ use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Class ArtistController
+ * @package App\Controller
+ */
 class ArtistController extends FOSRestController
 {
     use SerializerTrait;
@@ -50,7 +54,7 @@ class ArtistController extends FOSRestController
             throw $this->createNotFoundException();
         }
 
-        return $this->serialize($artist);
+        return $this->normalize($artist);
     }
 
     /**
@@ -64,7 +68,7 @@ class ArtistController extends FOSRestController
             ->findBy(['validated' => true])
         ;
 
-        return $this->serialize($artists);
+        return $this->normalize($artists);
     }
 
     /**
@@ -87,7 +91,7 @@ class ArtistController extends FOSRestController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            return $this->serialize($artist);
+            return $this->normalize($artist);
         }
 
         return $this->renderFormErrors($form);
@@ -110,7 +114,7 @@ class ArtistController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($artist);
             $this->entityManager->flush();
-            return $this->serialize($artist);
+            return $this->normalize($artist);
         }
 
         return $this->renderFormErrors($form);

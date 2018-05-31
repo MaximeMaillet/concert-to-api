@@ -45,7 +45,7 @@ class UserControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         /** @var User $user */
-        $user = $this->deserialize($client->getResponse()->getContent(), User::class);
+        $user = $this->jsonToEntity($client->getResponse()->getContent(), User::class);
 
         $this->assertEquals($this->user->getEmail(), $user->getEmail());
         $this->assertContains(User::ROLE_USER, $user->getRoles());

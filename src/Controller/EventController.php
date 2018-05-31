@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: MaximeMaillet
- * Date: 30/05/2018
- * Time: 20:03
- */
 
 namespace App\Controller;
-
 
 use App\Entity\Event;
 use App\Entity\User;
@@ -19,6 +12,10 @@ use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Class EventController
+ * @package App\Controller
+ */
 class EventController extends FOSRestController
 {
     use SerializerTrait;
@@ -53,7 +50,7 @@ class EventController extends FOSRestController
      */
     public function getEventAction(Request $request, Event $event)
     {
-        return $this->serialize($event);
+        return $this->normalize($event);
     }
 
     /**
@@ -62,7 +59,7 @@ class EventController extends FOSRestController
      */
     public function getEventsAction(Request $request)
     {
-        return $this->serialize(
+        return $this->normalize(
             $this->entityManager
                 ->getRepository(Event::class)
                 ->findAll()
@@ -87,7 +84,7 @@ class EventController extends FOSRestController
             $this->entityManager->persist($event);
             $this->entityManager->flush();
 
-            return $this->serialize($event);
+            return $this->normalize($event);
         }
 
         return $this->renderFormErrors($form);
@@ -114,7 +111,7 @@ class EventController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            return $this->serialize($event);
+            return $this->normalize($event);
         }
 
         return $this->renderFormErrors($form);

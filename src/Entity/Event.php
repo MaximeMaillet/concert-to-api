@@ -30,7 +30,6 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
-     * @Groups({"auth"})
      */
     protected $hash;
 
@@ -201,7 +200,6 @@ class Event
     public function addArtist(Artist $artist)
     {
         if (!$this->artists->contains($artist)) {
-            $artist->addEvent($this);
             $this->artists->add($artist);
         }
 
@@ -214,7 +212,6 @@ class Event
     public function removeArtist(Artist $artist)
     {
         if ($this->artists->contains($artist)) {
-            $artist->removeEvent($this);
             $this->artists->remove($artist);
         }
     }

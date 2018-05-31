@@ -2,11 +2,12 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
+use App\Tests\Utils\CustomWebTestCase;
 use App\Traits\SerializerTrait;
 use Namshi\JOSE\JWS;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SecurityControllerTests extends WebTestCase
+class SecurityControllerTests extends CustomWebTestCase
 {
     use SerializerTrait;
 
@@ -54,7 +55,7 @@ class SecurityControllerTests extends WebTestCase
         );
 
         /** @var User $user */
-        $user = $this->deserialize($client->getResponse()->getContent(), User::class, ['auth']);
+        $user = $this->jsonToEntity($client->getResponse()->getContent(), User::class);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertFalse($user->isActive());

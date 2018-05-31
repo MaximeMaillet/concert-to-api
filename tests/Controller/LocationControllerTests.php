@@ -44,7 +44,7 @@ class LocationControllerTests extends CustomWebTestCase
     protected function checkLocationAssert($content, Location $exactLocation)
     {
         /** @var Location $location */
-        $location = $this->deserialize($content, Location::class);
+        $location = $this->jsonToEntity($content, Location::class);
 
         $this->assertEquals($exactLocation->getName(), $location->getName());
         $this->assertEquals($exactLocation->getAddress(), $location->getAddress());
@@ -153,7 +153,7 @@ class LocationControllerTests extends CustomWebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         /** @var Location $location */
-        $location = $this->deserialize($client->getResponse()->getContent(), Location::class);
+        $location = $this->jsonToEntity($client->getResponse()->getContent(), Location::class);
 
         $this->assertEquals($this->location->getName(), $location->getName());
         $this->assertEquals($this->location->getAddress(), $location->getAddress());

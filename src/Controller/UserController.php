@@ -55,7 +55,7 @@ class UserController extends FOSRestController
             ->findBy(['isActive' => true])
         ;
 
-        return $this->serialize($users);
+        return $this->normalize($users);
     }
 
     /**
@@ -66,7 +66,7 @@ class UserController extends FOSRestController
      */
     public function getUserAction(Request $request, User $user)
     {
-        return $this->serialize($user);
+        return $this->normalize($user);
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends FOSRestController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            return $this->serialize($user);
+            return $this->normalize($user);
         }
 
         return $this->renderFormErrors($form);
