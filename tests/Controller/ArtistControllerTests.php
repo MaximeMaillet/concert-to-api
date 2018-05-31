@@ -244,6 +244,12 @@ class ArtistControllerTests extends CustomWebTestCase
                 'name' => 'NouveauName',
                 'logo' => 'NewLogo',
                 'validated' => true,
+                'events' => [
+                    [
+                        'name' => 'MyEvent',
+                        'dateStart' => '2018-05-31T19:33:07+00:00',
+                    ]
+                ]
             ],
             [],
             [
@@ -278,7 +284,13 @@ class ArtistControllerTests extends CustomWebTestCase
             self::get('router')->generate('put_artists'),
             [
                 'name' => 'NouveauName',
-                'logo' => 'NewLogo'
+                'logo' => 'NewLogo',
+                'events' => [
+                    [
+                        'name' => 'MyEvent',
+                        'dateStart' => '2018-05-31T19:33:07+00:00',
+                    ]
+                ]
             ],
             [],
             [
@@ -301,6 +313,27 @@ class ArtistControllerTests extends CustomWebTestCase
         $this->assertEquals('NouveauName', $artist->getName());
         $this->assertEquals('NewLogo', $artist->getLogo());
         $this->assertFalse($artist->isValidated());
+    }
+
+    public function testFuckedPutArtistActionAsConnected()
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'PUT',
+            self::get('router')->generate('put_artists'),
+            [
+                'name' => 'NouveauName',
+                'logo' => 'NewLogo',
+                'validated' => true,
+            ],
+            [],
+            [
+                'HTTP_Authorization' => $this->getAuthorization($this->user)
+            ]
+        );
+
+        $this->assertEquals(422, $client->getResponse()->getStatusCode());
     }
 
     public function testPutArtistActionAsNotConnected()

@@ -101,12 +101,12 @@ class CustomWebTestCase extends WebTestCase
     /**
      * @param $json
      * @param $entity
+     * @param array $groups
      * @return array
      */
     protected function jsonToEntity($json, $entity, $groups = [])
     {
         $encoders = array(new JsonEncoder());
-//        $normalizers = array(new ObjectNormalizer());
         $serializer = new Serializer([
             new EventNormalizer(),
             new ObjectNormalizer(),

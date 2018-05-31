@@ -42,6 +42,7 @@ class ArtistType extends AbstractType
                 'required' => false,
                 'entry_type' => EventType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
             ])
         ;
 
