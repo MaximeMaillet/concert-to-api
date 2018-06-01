@@ -146,10 +146,7 @@ class ArtistControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-
-        $artist = (new Artist())
-            ->setName('test'.mt_rand())
-        ;
+        $artist = (new Artist())->setName('ToPatch'.mt_rand());
         $entityManager->persist($artist);
         $entityManager->flush();
 
@@ -181,12 +178,9 @@ class ArtistControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-
-        /** @var Artist $artist */
-        $artist = $entityManager
-            ->getRepository(Artist::class)
-            ->findOneBy(['name' => ArtistsFixtures::ARTISTS_VALID_NAME[0]]);
-        ;
+        $artist = (new Artist())->setName('ToPatch');
+        $entityManager->persist($artist);
+        $entityManager->flush();
 
         $client->request(
             'PATCH',
@@ -202,7 +196,14 @@ class ArtistControllerTests extends CustomWebTestCase
             ]
         );
 
-        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        /** @var Artist $artist */
+        $artist = $entityManager
+            ->getRepository(Artist::class)
+            ->findOneBy(['id' => $artist->getId()]);
+
+        $this->assertEquals('NouveauName', $artist->getName());
     }
 
     public function testPatchArtistActionAsNotConnected()
@@ -247,7 +248,7 @@ class ArtistControllerTests extends CustomWebTestCase
                 'events' => [
                     [
                         'name' => 'MyEvent',
-                        'dateStart' => '2018-05-31T19:33:07+00:00',
+                        'startDate' => '2018-05-31T19:33:07+00:00',
                     ]
                 ]
             ],
@@ -288,7 +289,7 @@ class ArtistControllerTests extends CustomWebTestCase
                 'events' => [
                     [
                         'name' => 'MyEvent',
-                        'dateStart' => '2018-05-31T19:33:07+00:00',
+                        'startDate' => '2018-05-31T19:33:07+00:00',
                     ]
                 ]
             ],
@@ -313,27 +314,6 @@ class ArtistControllerTests extends CustomWebTestCase
         $this->assertEquals('NouveauName', $artist->getName());
         $this->assertEquals('NewLogo', $artist->getLogo());
         $this->assertFalse($artist->isValidated());
-    }
-
-    public function testFuckedPutArtistActionAsConnected()
-    {
-        $client = static::createClient();
-
-        $client->request(
-            'PUT',
-            self::get('router')->generate('put_artists'),
-            [
-                'name' => 'NouveauName',
-                'logo' => 'NewLogo',
-                'validated' => true,
-            ],
-            [],
-            [
-                'HTTP_Authorization' => $this->getAuthorization($this->user)
-            ]
-        );
-
-        $this->assertEquals(422, $client->getResponse()->getStatusCode());
     }
 
     public function testPutArtistActionAsNotConnected()
@@ -383,8 +363,9 @@ class ArtistControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-        /** @var Artist $artist */
-        $artist = $entityManager->getRepository(Artist::class)->findOneBy(['name' => ArtistsFixtures::ARTISTS_VALID_NAME[0]]);
+        $artist = (new Artist())->setName('ToDelete');
+        $entityManager->persist($artist);
+        $entityManager->flush();
 
         $client->request(
             'DELETE',
@@ -405,8 +386,9 @@ class ArtistControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-        /** @var Artist $artist */
-        $artist = $entityManager->getRepository(Artist::class)->findOneBy(['name' => ArtistsFixtures::ARTISTS_VALID_NAME[0]]);
+        $artist = (new Artist())->setName('ToDelete');
+        $entityManager->persist($artist);
+        $entityManager->flush();
 
         $client->request(
             'DELETE',

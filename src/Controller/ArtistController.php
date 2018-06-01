@@ -78,9 +78,9 @@ class ArtistController extends FOSRestController
      */
     public function patchArtistAction(Request $request, Artist $artist)
     {
-        if (!$this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
-            throw $this->createAccessDeniedException();
-        }
+//        if (!$this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
+//            throw $this->createAccessDeniedException();
+//        }
 
         $form = $this->createForm(ArtistType::class, $artist, ['method' => 'PATCH']);
 

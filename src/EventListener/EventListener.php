@@ -11,7 +11,9 @@ class EventListener
     {
         $entity = $eventArgs->getEntity();
         if ($entity instanceof Event) {
-            $entity->setHash(md5($entity->getName().($entity->getDateStart())->format('dmY')));
+//            @todo
+            $entity->setHash(md5($entity->getName().($entity->getStartDate())->format('dmY')));
+//            $entity->setHash(md5($entity->getName()));
         }
     }
 }

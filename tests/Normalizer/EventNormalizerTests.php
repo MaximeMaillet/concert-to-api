@@ -69,8 +69,8 @@ class EventNormalizerTests extends CustomWebTestCase
 
         $this->event = (new Event())
             ->setName('MonEventToNormalize')
-            ->setDateStart($dateStart)
-            ->setDateEnd($dateEnd)
+            ->setStartDate($dateStart)
+            ->setEndDate($dateEnd)
             ->addArtist($this->artist)
             ->setLocation($this->location)
         ;
@@ -93,7 +93,7 @@ class EventNormalizerTests extends CustomWebTestCase
         $this->assertArrayHasKey('name', $arrayEvent);
         $this->assertArrayHasKey('location', $arrayEvent);
         $this->assertArrayHasKey('artists', $arrayEvent);
-        $this->assertArrayHasKey('dateStart', $arrayEvent);
-        $this->assertArrayHasKey('dateEnd', $arrayEvent);
+        $this->assertArrayHasKey('startDate', $arrayEvent);
+        $this->assertArrayHasKey('endDate', $arrayEvent);
     }
 }

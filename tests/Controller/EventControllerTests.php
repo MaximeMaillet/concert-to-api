@@ -49,7 +49,7 @@ class EventControllerTests extends CustomWebTestCase
         $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
 
         $this->assertEquals($this->event->getName(), $event->getName());
-        $this->assertEquals($this->event->getDateStart()->format(\DateTime::ATOM), $event->getDateStart()->format(\DateTime::ATOM));
+        $this->assertEquals($this->event->getStartDate()->format('dmyHi'), $event->getStartDate()->format('dmyHi'));
         $this->assertEquals($this->event->getHash(), $event->getHash());
     }
 
@@ -115,8 +115,8 @@ class EventControllerTests extends CustomWebTestCase
             self::get('router')->generate('put_events'),
             [
                 'name' => $name,
-                'dateStart' => $dateStart,
-                'dateEnd' => '2018-05-31T19:33:07+00:00',
+                'startDate' => $dateStart,
+                'endDate' => '2018-05-31T19:33:07+00:00',
             ],
             [],
             [
@@ -129,7 +129,7 @@ class EventControllerTests extends CustomWebTestCase
         $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
 
         $this->assertEquals($name, $event->getName());
-        $this->assertEquals((new \DateTime($dateStart))->format(\DateTime::ATOM), $event->getDateStart()->format(\DateTime::ATOM));
+        $this->assertEquals((new \DateTime($dateStart))->format('dmYHi'), $event->getStartDate()->format('dmYHi'));
         $this->assertEquals($hash, $event->getHash());
     }
 
@@ -156,8 +156,8 @@ class EventControllerTests extends CustomWebTestCase
             ]),
             [
                 'name' => 'OtherEvent',
-                'dateStart' => '2018-05-23T19:33:07+00:00',
-                'dateEnd' => '2018-05-20T19:33:07+00:00',
+                'startDate' => '2018-05-23T19:33:07+00:00',
+                'endDate' => '2018-05-20T19:33:07+00:00',
             ],
             [],
             [
@@ -167,12 +167,14 @@ class EventControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
         /** @var Event $event */
-        $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
+        $event = $entityManager->getRepository(Event::class)->findOneBy(['id' => $this->event->getId()]);
 
         $this->assertEquals('OtherEvent', $event->getName());
-        $this->assertEquals('2018-05-23T19:33:07+00:00', $event->getDateStart()->format(\DateTime::ATOM));
-        $this->assertEquals('2018-05-20T19:33:07+00:00', $event->getDateEnd()->format(\DateTime::ATOM));
+        $this->assertEquals('2018-05-23T19:33:07+00:00', $event->getStartDate()->format(\DateTime::ATOM));
+        $this->assertEquals('2018-05-20T19:33:07+00:00', $event->getEndDate()->format(\DateTime::ATOM));
 
     }
 
@@ -215,7 +217,7 @@ class EventControllerTests extends CustomWebTestCase
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
         $event = (new Event())
             ->setName('Mydeletetevent')
-            ->setDateStart(new \DateTime('now'))
+            ->setStartDate(new \DateTime('now'))
         ;
         $entityManager->persist($event);
         $entityManager->flush();
@@ -244,7 +246,7 @@ class EventControllerTests extends CustomWebTestCase
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
         $event = (new Event())
             ->setName('Mydeletetevent')
-            ->setDateStart(new \DateTime('now'))
+            ->setStartDate(new \DateTime('now'))
         ;
         $entityManager->persist($event);
         $entityManager->flush();

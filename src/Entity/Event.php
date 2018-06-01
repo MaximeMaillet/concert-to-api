@@ -37,16 +37,16 @@ class Event
      * @ORM\Column(type="datetime", nullable=false)
      * @Groups({"auth"})
      */
-    protected $dateStart;
+    protected $startDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"auth"})
      */
-    protected $dateEnd;
+    protected $endDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Location", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Location", cascade={"persist"}, fetch="EAGER")
      * @ORM\JoinColumn(name="location_id", nullable=true, onDelete="SET NULL", referencedColumnName="id")
      * @Groups({"auth"})
      */
@@ -63,7 +63,7 @@ class Event
      */
     public function __construct()
     {
-        $this->dateStart = new \DateTime();
+        $this->startDate = new \DateTime();
         $this->artists = new ArrayCollection();
     }
 
@@ -124,36 +124,36 @@ class Event
     /**
      * @return mixed
      */
-    public function getDateStart()
+    public function getStartDate()
     {
-        return $this->dateStart;
+        return $this->startDate;
     }
 
     /**
-     * @param mixed $dateStart
+     * @param mixed $startDate
      * @return Event
      */
-    public function setDateStart(\DateTime $dateStart)
+    public function setStartDate($startDate)
     {
-        $this->dateStart = $dateStart;
+        $this->startDate = $startDate;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getDateEnd()
+    public function getEndDate()
     {
-        return $this->dateEnd;
+        return $this->endDate;
     }
 
     /**
-     * @param mixed $dateEnd
+     * @param mixed $endDate
      * @return Event
      */
-    public function setDateEnd($dateEnd)
+    public function setEndDate($endDate)
     {
-        $this->dateEnd = $dateEnd;
+        $this->endDate = $endDate;
         return $this;
     }
 

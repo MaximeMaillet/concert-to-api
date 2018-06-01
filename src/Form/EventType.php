@@ -23,21 +23,21 @@ class EventType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => true,
             ])
-            ->add('dateStart', DateTimeType::class, [
-                'required' => true,
-                'widget' => 'single_text'
-            ])
-            ->add('dateEnd', DateTimeType::class, [
+            ->add('startDate', DateTimeType::class, [
                 'required' => false,
                 'widget' => 'single_text'
             ])
-            ->add('location', EntityType::class, [
-                'class' => Location::class,
-                'choice_label' => 'id',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('l')
-                        ->orderBy('l.name', 'ASC');
-                }
+            ->add('endDate', DateTimeType::class, [
+                'required' => false,
+                'widget' => 'single_text'
+            ])
+            ->add('location', LocationType::class, [
+//                'class' => Location::class,
+//                'choice_label' => 'id',
+//                'query_builder' => function (EntityRepository $er) {
+//                    return $er->createQueryBuilder('l')
+//                        ->orderBy('l.name', 'ASC');
+//                }
             ])
             ->add('artists', CollectionType::class, [
                 'required' => false,
@@ -50,6 +50,7 @@ class EventType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Event::class,
+            'allow_extra_fields' => true,
         ));
     }
 }

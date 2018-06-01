@@ -39,28 +39,28 @@ class Location
     protected $postal_code;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $city;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $country;
 
     /**
-     * @ORM\Column(type="float", nullable=false)
+     * @ORM\Column(type="float", nullable=true)
      * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $latitude;
 
     /**
-     * @ORM\Column(type="float", nullable=false)
+     * @ORM\Column(type="float", nullable=true)
      * @Assert\NotBlank()
      * @Groups({"auth"})
      */

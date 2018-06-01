@@ -25,8 +25,8 @@ class EventNormalizer implements NormalizerInterface, DenormalizerInterface
             'name' => $object->getName(),
             'hash' => $object->getHash(),
             'location' => $object->getLocation(),
-            'dateStart' => $object->getDateStart() ? $object->getDateStart()->format(\DateTime::ATOM) : null,
-            'dateEnd' => $object->getDateEnd() ? $object->getDateEnd()->format(\DateTime::ATOM) : null,
+            'startDate' => $object->getStartDate() ? $object->getStartDate()->format(\DateTime::ATOM) : null,
+            'endDate' => $object->getEndDate() ? $object->getEndDate()->format(\DateTime::ATOM) : null,
             'artists' => $artists,
         ];
     }
@@ -38,12 +38,12 @@ class EventNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        if (isset($data['dateStart']) && null !== $data['dateStart'] && is_string($data['dateStart'])) {
-            $data['dateStart'] = new \DateTime($data['dateStart']);
+        if (isset($data['startDate']) && null !== $data['startDate'] && is_string($data['startDate'])) {
+            $data['startDate'] = new \DateTime($data['startDate']);
         }
 
-        if (isset($data['dateEnd']) && null !== $data['dateEnd'] && is_string($data['dateEnd'])) {
-            $data['dateEnd'] = new \DateTime($data['dateEnd']);
+        if (isset($data['endDate']) && null !== $data['endDate'] && is_string($data['endDate'])) {
+            $data['endDate'] = new \DateTime($data['endDate']);
         }
 
         $normalizer = new ObjectNormalizer();

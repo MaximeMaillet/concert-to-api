@@ -30,7 +30,6 @@ class ArtistType extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -55,6 +54,7 @@ class ArtistType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Artist::class,
+            'allow_extra_fields' => true,
         ));
     }
 }
