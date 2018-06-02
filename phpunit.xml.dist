@@ -25,6 +25,10 @@
         <env name="USER_ADMIN_PASSWORD" value="admin@test.fr"/>
         <env name="USER_SUPER_ADMIN_EMAIL" value="super.admin@test.fr"/>
         <env name="USER_SUPER_ADMIN_PASSWORD" value="super.admin@test.fr"/>
+
+        <!-- ###+ nelmio/cors-bundle ### -->
+        <env name="CORS_ALLOW_ORIGIN" value="^https?://localhost:?[0-9]*$"/>
+        <!-- ###- nelmio/cors-bundle ### -->
     </php>
 
     <testsuites>

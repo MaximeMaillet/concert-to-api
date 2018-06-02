@@ -7,6 +7,7 @@ use App\Form\UserType;
 use App\Services\UserService;
 use App\Traits\SerializerTrait;
 use FOS\RestBundle\Controller\FOSRestController;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,16 +33,24 @@ class SecurityController extends FOSRestController
     protected $passwordEncoder;
 
     /**
+     * @var JWTEncoderInterface
+     */
+    protected $encoder;
+
+    /**
      * SecurityController constructor.
      * @param UserService $userService
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param JWTEncoderInterface $encoder
      */
     public function __construct(
         UserService $userService,
-        UserPasswordEncoderInterface $passwordEncoder
+        UserPasswordEncoderInterface $passwordEncoder,
+        JWTEncoderInterface $encoder
     ) {
         $this->userService = $userService;
         $this->passwordEncoder = $passwordEncoder;
+        $this->encoder = $encoder;
     }
 
     /**
@@ -64,14 +73,14 @@ class SecurityController extends FOSRestController
             throw $this->createNotFoundException();
         }
 
-        $isValid = $this->get('security.password_encoder')
+        $isValid = $this->passwordEncoder
             ->isPasswordValid($user, $request->request->get('password'));
 
         if (!$isValid) {
             throw new BadCredentialsException();
         }
 
-        $token = $this->get('lexik_jwt_authentication.encoder')
+        $token = $this->encoder
             ->encode(
                 array_merge(
                     $this->normalize($user, ['auth']),
@@ -107,7 +116,18 @@ class SecurityController extends FOSRestController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->normalize($user);
+            $token = $this->encoder
+                ->encode(
+                    array_merge(
+                        $this->normalize($user, ['auth']),
+                        ['exp' => time() + 3600]
+                    )
+                );
+
+            return new JsonResponse([
+                'token' => $token,
+                'user' => $this->normalize($user)
+            ]);
         }
 
         return $this->renderFormErrors($form);
