@@ -11,7 +11,7 @@ fos_elastica:
             tokenizer:
               my_tokenizer:
                 type: "edge_ngram"
-                min_gram: 1
+                min_gram: 4
                 max_gram: 12
                 token_chars:
                   - 'letter'
@@ -40,6 +40,24 @@ fos_elastica:
           persistence:
             driver: orm
             model: App\Entity\Artist
+            provider: ~
+            listener: ~
+            finder: ~
+
+        events:
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "text"
+              analyzer: my_analyzer
+            startDate:
+              type: "date"
+            endDate:
+              type: "date"
+          persistence:
+            driver: orm
+            model: App\Entity\Event
             provider: ~
             listener: ~
             finder: ~

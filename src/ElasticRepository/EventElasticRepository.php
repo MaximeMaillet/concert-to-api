@@ -2,11 +2,11 @@
 
 namespace App\ElasticRepository;
 
-use App\Model\ArtistModel;
+use App\Model\EventModel;
 use Elastica\Query;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
 
-class ArtistElasticRepository
+class EventElasticRepository
 {
     /**
      * @var TransformedFinder
@@ -22,23 +22,30 @@ class ArtistElasticRepository
         $this->finder = $finder;
     }
 
-    public function searchArtists(ArtistModel $artistModel)
+    public function searchEvent(EventModel $eventModel)
     {
         return $this->finder->createPaginatorAdapter(
-            $this->getArtists($artistModel)
+            $this->getEvents($eventModel)
         );
     }
 
-    protected function getArtists(ArtistModel $artistModel)
+    protected function getEvents(EventModel $eventModel)
     {
         $query = new Query();
         $mustQueries = [];
         $shouldQueries = [];
 
-        $mustQueries = array_merge($mustQueries, $this->addBaseQueries($artistModel));
+        if (null !== $eventModel->getName()) {
+            $mustQueries = array_merge($mustQueries, [new Query\Match('name', $eventModel->getName())]);
+        }
 
-        if (null !== $artistModel->getName()) {
-            $mustQueries = array_merge($mustQueries, [new Query\Match('name', $artistModel->getName())]);
+        if (null !== $eventModel->getStartDate()) {
+            $startDateWithOneHour = new \DateTime($eventModel->getStartDate()->format(\DateTime::ATOM));
+            $startDateWithOneHour->add(new \DateInterval('P1D'));
+            $mustQueries = array_merge($mustQueries, [new Query\Range('startDate', [
+                'gte' => $eventModel->getStartDate()->format(\DateTime::ATOM),
+                'lte' => $startDateWithOneHour->format(\DateTime::ATOM),
+            ])]);
         }
 
         $boolQuery = new Query\BoolQuery();
@@ -52,20 +59,7 @@ class ArtistElasticRepository
 
         $query->setQuery($boolQuery);
         $query->addSort(['_score' => ['order' => 'desc']]);
+        $query->setMinScore(1);
         return $query;
-    }
-
-    /**
-     * @param ArtistModel $artistModel
-     * @return array
-     */
-    protected function addBaseQueries(ArtistModel $artistModel)
-    {
-        $queries = [];
-        if (!$artistModel->isFromScrapper()) {
-            $queries[] = new Query\Term(['validated' => $artistModel->isValidated()]);
-        }
-
-        return $queries;
     }
 }

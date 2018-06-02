@@ -1,3 +1,8 @@
 services:
-  FOS\ElasticaBundle\Finder\TransformedFinder:
-    alias: fos_elastica.finder.app.artist
+  App\ElasticRepository\ArtistElasticRepository:
+    arguments:
+      - '@fos_elastica.finder.app.artist'
+
+  App\ElasticRepository\EventElasticRepository:
+    arguments:
+      - '@fos_elastica.finder.app.events'

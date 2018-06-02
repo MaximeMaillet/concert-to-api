@@ -14,11 +14,6 @@ class ArtistModel
     protected $name;
 
     /**
-     * @var string|null
-     */
-    protected $exactName;
-
-    /**
      * @var bool
      */
     protected $validated;
@@ -83,21 +78,5 @@ class ArtistModel
     public function setFromScrapper($fromScrapper)
     {
         $this->fromScrapper = $fromScrapper;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getExactName()
-    {
-        return $this->exactName;
-    }
-
-    /**
-     * @param null|string $exactName
-     */
-    public function setExactName($exactName)
-    {
-        $this->exactName = $exactName;
     }
 }

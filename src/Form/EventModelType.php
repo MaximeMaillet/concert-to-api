@@ -3,13 +3,14 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Model\ArtistModel;
+use App\Model\EventModel;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class ArtistModelType extends AbstractType
+class EventModelType extends AbstractType
 {
     /**
      * @var AuthorizationCheckerInterface
@@ -30,20 +31,22 @@ class ArtistModelType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('startDate', DateTimeType::class, [
+                'widget' => 'single_text'
+            ])
+            ->add('endDate')
             ->add('fromScrapper')
         ;
 
         if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
-            $builder->add('validated', null, [
-                'empty_data' => true,
-            ]);
+            // @todo validated
         }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => ArtistModel::class,
+            'data_class' => EventModel::class,
             'allow_extra_fields' => true,
         ));
     }

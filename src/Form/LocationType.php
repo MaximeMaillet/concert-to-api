@@ -49,6 +49,7 @@ class LocationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Location::class,
+            'allow_extra_fields' => true,
         ));
     }
 }
