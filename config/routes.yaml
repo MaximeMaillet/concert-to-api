@@ -2,26 +2,31 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 users:
-    type: rest
-    prefix: api
-    resource: App\Controller\UserController
+  type: rest
+  prefix: api
+  resource: App\Controller\UserController
 
 security:
-    type: rest
-    prefix: api/authenticate
-    resource: App\Controller\SecurityController
+  type: rest
+  prefix: api/authenticate
+  resource: App\Controller\SecurityController
 
 artists:
-    type: rest
-    prefix: api
-    resource: App\Controller\ArtistController
+  type: rest
+  prefix: api
+  resource: App\Controller\ArtistController
 
 locations:
-    type: rest
-    prefix: api
-    resource: App\Controller\LocationController
+  type: rest
+  prefix: api
+  resource: App\Controller\LocationController
 
 events:
-    type: rest
-    prefix: api
-    resource: App\Controller\EventController
+  type: rest
+  prefix: api
+  resource: App\Controller\EventController
+
+search:
+  type: rest
+  prefix: api
+  resource: App\Controller\SearchController

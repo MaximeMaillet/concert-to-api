@@ -1,0 +1,3 @@
+services:
+  FOS\ElasticaBundle\Finder\TransformedFinder:
+    alias: fos_elastica.finder.app.artist
