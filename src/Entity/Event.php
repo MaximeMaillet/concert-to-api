@@ -46,8 +46,8 @@ class Event
     protected $endDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Location", cascade={"persist"}, fetch="EAGER")
-     * @ORM\JoinColumn(name="location_id", nullable=true, onDelete="SET NULL", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Location", inversedBy="events", cascade={"persist"})
+     * @ORM\JoinColumn(name="location_id", onDelete="CASCADE", referencedColumnName="id", nullable=false)
      * @Groups({"auth"})
      */
     protected $location;

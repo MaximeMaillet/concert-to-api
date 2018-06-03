@@ -5,6 +5,7 @@ namespace App\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Event;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LocationRepository")
@@ -16,7 +17,7 @@ class Location
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
-     * @Groups({"auth", "noauth"})
+     * @Groups({"auth"})
      */
     protected $id;
 
@@ -65,6 +66,11 @@ class Location
      * @Groups({"auth"})
      */
     protected $longitude;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Event", mappedBy="location")
+     */
+    protected $events;
 
     /**
      * @ORM\Column(type="boolean")

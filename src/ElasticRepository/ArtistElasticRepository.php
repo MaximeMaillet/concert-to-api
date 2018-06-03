@@ -63,7 +63,8 @@ class ArtistElasticRepository
     {
         $queries = [];
         if (!$artistModel->isFromScrapper()) {
-            $queries[] = new Query\Term(['validated' => $artistModel->isValidated()]);
+            //@todo
+//            $queries[] = new Query\Term(['validated' => $artistModel->isValidated()]);
         }
 
         return $queries;

@@ -20,11 +20,20 @@ class ArtistControllerTests extends CustomWebTestCase
      */
     protected $event;
 
+    /**
+     * @var Location
+     */
+    protected $location;
+
     protected function setUp()
     {
         parent::setUp();
+        $entityManager = self::get('doctrine.orm.entity_manager');
+        $this->location = $entityManager->getRepository(Location::class)->findOneBy(['validated' => true]);
+
         $this->event = (new Event())
             ->setName('ArtistEvent'.mt_rand())
+            ->setLocation($this->location)
         ;
     }
 
@@ -249,6 +258,7 @@ class ArtistControllerTests extends CustomWebTestCase
                     [
                         'name' => 'MyEvent',
                         'startDate' => '2018-05-31T19:33:07+00:00',
+                        'location' => $this->location->getId(),
                     ]
                 ]
             ],
@@ -290,6 +300,7 @@ class ArtistControllerTests extends CustomWebTestCase
                     [
                         'name' => 'MyEvent',
                         'startDate' => '2018-05-31T19:33:07+00:00',
+                        'location' => $this->location->getId()
                     ]
                 ]
             ],

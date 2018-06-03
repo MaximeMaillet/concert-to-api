@@ -5,7 +5,7 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.1/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
 >
     <php>
         <ini name="error_reporting" value="-1" />
@@ -14,6 +14,10 @@
         <env name="APP_DEBUG" value="1" />
         <env name="APP_SECRET" value="s$cretf0rt3st" />
         <env name="SHELL_VERBOSITY" value="-1" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+
+        <env name="LOAD_FIXTURES" value="1" />
+        <env name="UPDATE_SCHEMA" value="1" />
 
         <env name="DATABASE_URL" value="" />
         <env name="JWT_PRIVATE_KEY_PATH" value=""/>
@@ -26,14 +30,14 @@
         <env name="USER_SUPER_ADMIN_EMAIL" value="super.admin@test.fr"/>
         <env name="USER_SUPER_ADMIN_PASSWORD" value="super.admin@test.fr"/>
 
-        <!-- ###+ nelmio/cors-bundle ### -->
         <env name="CORS_ALLOW_ORIGIN" value="^https?://localhost:?[0-9]*$"/>
-        <!-- ###- nelmio/cors-bundle ### -->
+        <env name="ELASTIC_PORT" value="9200"/>
+        <env name="ELASTIC_HOST" value="localhost"/>
     </php>
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>tests/Controller</directory>
+            <directory suffix="Tests.php">tests/Controller</directory>
         </testsuite>
     </testsuites>
 

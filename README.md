@@ -38,6 +38,26 @@ Update database (first install) :
 docker-compose -f docker-compose.dev.yml run --rm -u web bash -c "bin/console doctrine:schema:update -f" 
 ```
 
+## Tests
+
+Copy config file and set environment variables :
+```bash
+cp phpunit.xml.dist phpunit.xml.dist
+```
+
+Launch dockers :
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Launch tests :
+
+```bash
+docker-compose -f docker-compose.dev.yml exec -u web app bash -c "bin/phpunit -c phpunit.xml"
+```
+
+
 ## Docker
 
 ### API

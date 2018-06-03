@@ -54,12 +54,12 @@ class SecurityControllerTests extends CustomWebTestCase
             ]
         );
 
-        /** @var User $user */
-        $user = $this->jsonToEntity($client->getResponse()->getContent(), User::class);
+        $response = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertFalse($user->isActive());
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertContains(User::ROLE_USER, $user->getRoles());
+        $this->assertNotNull($response['token']);
+        $this->assertFalse($response['user']['isActive']);
+        $this->assertEquals($email, $response['user']['email']);
+        $this->assertContains(User::ROLE_USER, $response['user']['roles']);
     }
 }

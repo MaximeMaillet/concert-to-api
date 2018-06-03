@@ -20,27 +20,23 @@ class EventType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, [
-                'required' => true,
-            ])
+            ->add('name', TextType::class)
             ->add('startDate', DateTimeType::class, [
-                'required' => false,
                 'widget' => 'single_text'
             ])
             ->add('endDate', DateTimeType::class, [
-                'required' => false,
                 'widget' => 'single_text'
             ])
-            ->add('location', LocationType::class, [
-//                'class' => Location::class,
-//                'choice_label' => 'id',
-//                'query_builder' => function (EntityRepository $er) {
-//                    return $er->createQueryBuilder('l')
-//                        ->orderBy('l.name', 'ASC');
-//                }
+            ->add('location', EntityType::class, [
+                'class' => Location::class,
+                'choice_label' => 'id',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('l')
+                        ->where('l.validated = 1')
+                        ->orderBy('l.name', 'ASC');
+                }
             ])
             ->add('artists', CollectionType::class, [
-                'required' => false,
                 'entry_type' => ArtistType::class
             ])
         ;

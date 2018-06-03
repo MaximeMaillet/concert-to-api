@@ -108,10 +108,13 @@ class SecurityController extends FOSRestController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
             $user = $form->getData();
             $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
 
+            //@todo
+            //$user->addRole(User::ROLE_ADMIN);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();

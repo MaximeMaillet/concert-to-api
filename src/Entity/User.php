@@ -66,7 +66,7 @@ class User implements AdvancedUserInterface, \Serializable
     /**
      * @var array
      * @ORM\Column(type="array")
-     * @Groups({"auth"})
+     * @Groups({"auth", "noauth"})
      */
     protected $roles;
 

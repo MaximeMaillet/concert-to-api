@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Event;
+use App\Entity\Location;
 use App\Entity\User;
 use App\Tests\Utils\CustomWebTestCase;
 use App\Traits\SerializerTrait;
@@ -17,12 +18,20 @@ class EventControllerTests extends CustomWebTestCase
      */
     protected $event;
 
+    /**
+     * @var Location
+     */
+    protected $location;
+
     protected function setUp()
     {
         parent::setUp();
         $entityManager = self::get('doctrine.orm.entity_manager');
+        $this->location = $entityManager->getRepository(Location::class)->findOneBy(['validated' => true]);
+
         $this->event = (new Event())
             ->setName('MyEvent'.mt_rand())
+            ->setLocation($this->location)
         ;
         $entityManager->persist($this->event);
         $entityManager->flush();
@@ -106,9 +115,13 @@ class EventControllerTests extends CustomWebTestCase
     public function testPutEventsAsConnected()
     {
         $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
         $name = 'MyEventPut'.mt_rand();
         $dateStart = '2018-05-30T19:33:07+00:00';
         $hash = md5($name.(new \DateTime($dateStart))->format('dmY'));
+
+        $location = $entityManager->getRepository(Location::class)->findOneBy(['validated' => true]);
 
         $client->request(
             'PUT',
@@ -117,6 +130,7 @@ class EventControllerTests extends CustomWebTestCase
                 'name' => $name,
                 'startDate' => $dateStart,
                 'endDate' => '2018-05-31T19:33:07+00:00',
+                'location' => $location->getId(),
             ],
             [],
             [
@@ -158,6 +172,7 @@ class EventControllerTests extends CustomWebTestCase
                 'name' => 'OtherEvent',
                 'startDate' => '2018-05-23T19:33:07+00:00',
                 'endDate' => '2018-05-20T19:33:07+00:00',
+                'location' => $this->event->getLocation()->getId(),
             ],
             [],
             [
@@ -218,6 +233,7 @@ class EventControllerTests extends CustomWebTestCase
         $event = (new Event())
             ->setName('Mydeletetevent')
             ->setStartDate(new \DateTime('now'))
+            ->setLocation($this->location)
         ;
         $entityManager->persist($event);
         $entityManager->flush();
@@ -247,6 +263,7 @@ class EventControllerTests extends CustomWebTestCase
         $event = (new Event())
             ->setName('Mydeletetevent')
             ->setStartDate(new \DateTime('now'))
+            ->setLocation($this->location)
         ;
         $entityManager->persist($event);
         $entityManager->flush();

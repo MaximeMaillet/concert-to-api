@@ -44,6 +44,17 @@ trait SerializerTrait
     }
 
     /**
+     * @param $array
+     * @param int $status
+     * @param array $headers
+     * @return JsonResponse
+     */
+    public function renderArray(array $array, $status = 200, $headers = [])
+    {
+        return new JsonResponse($array, $status, $headers);
+    }
+
+    /**
      * @param FormInterface $form
      * @param string $glue
      * @return string

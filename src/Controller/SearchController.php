@@ -37,16 +37,17 @@ class SearchController extends FOSRestController
     /**
      * SearchController constructor.
      * @param ArtistElasticRepository $artistElasticRepository
-     * @param EventElasticRepository $elasticRepository
+     * @param EventElasticRepository $eventElasticRepository
      * @param Paginator|PaginatorInterface $paginator
+     * @internal param EventElasticRepository $elasticRepository
      */
     public function __construct(
         ArtistElasticRepository $artistElasticRepository,
-        EventElasticRepository $elasticRepository,
+        EventElasticRepository $eventElasticRepository,
         PaginatorInterface $paginator
     ) {
         $this->artistElasticRepository = $artistElasticRepository;
-        $this->eventElasticRepository = $elasticRepository;
+        $this->eventElasticRepository = $eventElasticRepository;
         $this->paginator = $paginator;
     }
 
@@ -68,7 +69,11 @@ class SearchController extends FOSRestController
             $summary = $this->artistElasticRepository->searchArtists($artistModel);
             $results = $this->paginator->paginate($summary);
 
-            return $this->normalize($results);
+
+            return $this->renderArray([
+                'results' => $this->normalize($results),
+                'pagination' => $results->getPaginationData()
+            ]);
         }
 
         return $this->renderFormErrors($form);
@@ -92,7 +97,10 @@ class SearchController extends FOSRestController
             $summary = $this->eventElasticRepository->searchEvent($eventModel);
             $results = $this->paginator->paginate($summary);
 
-            return $this->normalize($results);
+            return $this->renderArray([
+                'results' => $this->normalize($results),
+                'pagination' => $results->getPaginationData()
+            ]);
         }
 
         return $this->renderFormErrors($form);
