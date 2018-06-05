@@ -155,8 +155,14 @@ class ArtistControllerTests extends CustomWebTestCase
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-        $artist = (new Artist())->setName('ToPatch'.mt_rand());
+
+        $event = (new Event())->setName('cocou')->setStartDate((new \DateTime('now')))->setLocation($this->location);
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        $artist = (new Artist())->setName('ToPatch'.mt_rand())->addEvent($event);
         $entityManager->persist($artist);
+        $entityManager->persist($this->event);
         $entityManager->flush();
 
         $client->request(
@@ -167,6 +173,10 @@ class ArtistControllerTests extends CustomWebTestCase
             [
                 'name' => 'NouveauName',
                 'validated' => true,
+                'events' => [
+                    $event->getId(),
+                    $this->event->getId(),
+                ]
             ],
             [],
             [
@@ -181,14 +191,17 @@ class ArtistControllerTests extends CustomWebTestCase
 
         $this->assertEquals('NouveauName', $artistReturned->getName());
         $this->assertTrue($artistReturned->isValidated());
+        $this->assertEquals(2, count($artist->getEvents()));
     }
 
     public function testPatchArtistActionAsConnected()
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+
         $artist = (new Artist())->setName('ToPatch');
         $entityManager->persist($artist);
+        $entityManager->persist($this->event);
         $entityManager->flush();
 
         $client->request(
@@ -198,6 +211,9 @@ class ArtistControllerTests extends CustomWebTestCase
             ]),
             [
                 'name' => 'NouveauName',
+                'events' => [
+                    $this->event->getId()
+                ]
             ],
             [],
             [
@@ -213,6 +229,14 @@ class ArtistControllerTests extends CustomWebTestCase
             ->findOneBy(['id' => $artist->getId()]);
 
         $this->assertEquals('NouveauName', $artist->getName());
+
+        $events = $artist->getEvents()->toArray();
+        $this->assertEquals(1, count($events));
+        for($i=0; $i<count($events); $i++) {
+            $this->assertEquals($this->event->getId(), $events[$i]->getId());
+            $this->assertEquals($this->event->getName(), $events[$i]->getName());
+            $this->assertEquals($this->event->getLocation()->getId(), $events[$i]->getLocation()->getId());
+        }
     }
 
     public function testPatchArtistActionAsNotConnected()
@@ -255,11 +279,7 @@ class ArtistControllerTests extends CustomWebTestCase
                 'logo' => 'NewLogo',
                 'validated' => true,
                 'events' => [
-                    [
-                        'name' => 'MyEvent',
-                        'startDate' => '2018-05-31T19:33:07+00:00',
-                        'location' => $this->location->getId(),
-                    ]
+                    $this->event->getId(),
                 ]
             ],
             [],
@@ -283,12 +303,15 @@ class ArtistControllerTests extends CustomWebTestCase
         $this->assertEquals('NouveauName', $artist->getName());
         $this->assertEquals('NewLogo', $artist->getLogo());
         $this->assertTrue($artist->isValidated());
+        $this->assertEquals(1, count($artist->getEvents()));
     }
 
     public function testPutArtistActionAsConnected()
     {
         $client = static::createClient();
         $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
+        $entityManager->persist($this->event);
+        $entityManager->flush();
 
         $client->request(
             'PUT',
@@ -297,11 +320,7 @@ class ArtistControllerTests extends CustomWebTestCase
                 'name' => 'NouveauName',
                 'logo' => 'NewLogo',
                 'events' => [
-                    [
-                        'name' => 'MyEvent',
-                        'startDate' => '2018-05-31T19:33:07+00:00',
-                        'location' => $this->location->getId()
-                    ]
+                    $this->event->getId(),
                 ]
             ],
             [],
@@ -325,6 +344,7 @@ class ArtistControllerTests extends CustomWebTestCase
         $this->assertEquals('NouveauName', $artist->getName());
         $this->assertEquals('NewLogo', $artist->getLogo());
         $this->assertFalse($artist->isValidated());
+        $this->assertEquals(1, count($artist->getEvents()));
     }
 
     public function testPutArtistActionAsNotConnected()

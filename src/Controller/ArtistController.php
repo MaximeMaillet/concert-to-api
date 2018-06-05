@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Artist;
+use App\Entity\Event;
 use App\Entity\User;
 use App\Form\ArtistType;
 use App\Traits\SerializerTrait;
@@ -50,7 +51,7 @@ class ArtistController extends FOSRestController
      */
     public function getArtistAction(Request $request, Artist $artist)
     {
-        if (!$artist->isValidated()) {
+        if (!$this->authorizationChecker->isGranted(User::ROLE_ADMIN) && !$artist->isValidated()) {
             throw $this->createNotFoundException();
         }
 
@@ -78,10 +79,6 @@ class ArtistController extends FOSRestController
      */
     public function patchArtistAction(Request $request, Artist $artist)
     {
-//        if (!$this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
-//            throw $this->createAccessDeniedException();
-//        }
-
         $form = $this->createForm(ArtistType::class, $artist, ['method' => 'PATCH']);
 
         try {
@@ -134,6 +131,13 @@ class ArtistController extends FOSRestController
         $this->entityManager->remove($artist);
         $this->entityManager->flush();
 
+        return $this->renderBoolean(true);
+    }
+
+    public function putArtistsEventsAction(Request $request, Artist $artist, Event $event)
+    {
+        $artist->addEvent($event);
+        $this->entityManager->flush();
         return $this->renderBoolean(true);
     }
 }

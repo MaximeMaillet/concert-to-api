@@ -2,6 +2,8 @@
 
 namespace App\Tests\Controller;
 
+use App\DataFixtures\ArtistsFixtures;
+use App\Entity\Artist;
 use App\Entity\Event;
 use App\Entity\Location;
 use App\Entity\User;
@@ -140,7 +142,9 @@ class EventControllerTests extends CustomWebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         /** @var Event $event */
-        $event = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
+        $eventResponse = $this->jsonToEntity($client->getResponse()->getContent(), Event::class);
+
+        $event = $entityManager->getRepository(Event::class)->findOneBy(['id' => $eventResponse->getId()]);
 
         $this->assertEquals($name, $event->getName());
         $this->assertEquals((new \DateTime($dateStart))->format('dmYHi'), $event->getStartDate()->format('dmYHi'));

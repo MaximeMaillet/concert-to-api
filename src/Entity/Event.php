@@ -35,6 +35,7 @@ class Event
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $startDate;
@@ -48,13 +49,14 @@ class Event
     /**
      * @ORM\ManyToOne(targetEntity="Location", inversedBy="events", cascade={"persist"})
      * @ORM\JoinColumn(name="location_id", onDelete="CASCADE", referencedColumnName="id", nullable=false)
+     * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $location;
 
     /**
      * @var ArrayCollection|Artist[]
-     * @ORM\ManyToMany(targetEntity="App\Entity\Artist", mappedBy="events")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Artist", mappedBy="events", fetch="EXTRA_LAZY")
      */
     protected $artists;
 
@@ -158,7 +160,7 @@ class Event
     }
 
     /**
-     * @return mixed
+     * @return Location
      */
     public function getLocation()
     {
@@ -166,7 +168,7 @@ class Event
     }
 
     /**
-     * @param mixed $location
+     * @param Location $location
      * @return Event
      */
     public function setLocation($location)

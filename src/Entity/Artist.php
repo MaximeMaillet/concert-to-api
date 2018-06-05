@@ -42,7 +42,7 @@ class Artist
 
     /**
      * @var Event[]
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="artists", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="artists", cascade={"persist"})
      * @ORM\JoinTable(
      *      name="artists_events",
      *      joinColumns={@ORM\JoinColumn(name="artist_id", referencedColumnName="id", onDelete="cascade")},
@@ -116,7 +116,7 @@ class Artist
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection
      */
     public function getEvents()
     {
@@ -139,7 +139,16 @@ class Artist
      */
     public function addEvent($event)
     {
-        if (!$this->events->contains($event)) {
+        $isContain = false;
+        $eventArray = $this->events->toArray();
+        /** @var Event $i */
+        for($i=0;$i<count($eventArray); $i++) {
+            if($eventArray[$i]->getHash() === $event->getHash()) {
+                $isContain = true;
+            }
+        }
+
+        if (!$isContain) {
             $this->events->add($event);
         }
 
@@ -152,8 +161,17 @@ class Artist
      */
     public function removeEvent(Event $event)
     {
-        if ($this->events->contains($event)) {
-            $this->events->remove($event);
+        $isContain = false;
+        $eventArray = $this->events->toArray();
+        /** @var Event $i */
+        for($i=0;$i<count($eventArray); $i++) {
+            if($eventArray[$i]->getHash() === $event->getHash()) {
+                $isContain = true;
+            }
+        }
+
+        if ($isContain) {
+            $this->events->removeElement($event);
         }
 
         return $this;

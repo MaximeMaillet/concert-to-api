@@ -23,6 +23,7 @@ class Location
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $name;
@@ -48,7 +49,6 @@ class Location
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank()
      * @Groups({"auth"})
      */
     protected $country;
@@ -246,5 +246,17 @@ class Location
     {
         $this->validated = $validated;
         return $this;
+    }
+
+    /**
+     * For ES
+     */
+    public function getLocation()
+    {
+        if (null !== $this->longitude && null !== $this->latitude) {
+            return $this->latitude.','.$this->longitude;
+        }
+
+        return '0,0';
     }
 }

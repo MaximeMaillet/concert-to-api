@@ -54,7 +54,7 @@ docker-compose -f docker-compose.dev.yml up -d
 Launch tests :
 
 ```bash
-docker-compose -f docker-compose.dev.yml exec -u web app bash -c "bin/phpunit -c phpunit.xml"
+docker-compose -f docker-compose.dev.yml exec -u web app bash -c "bin/phpunit"
 ```
 
 

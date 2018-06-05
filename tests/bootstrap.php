@@ -13,12 +13,18 @@ if($_ENV['UPDATE_SCHEMA']) {
     ), $output);
 }
 
-
 if($_ENV['LOAD_FIXTURES']) {
     passthru(sprintf(
         'php "%s/../bin/console" doctrine:fixtures:load --env=test --ansi -vvvv --no-interaction',
         __DIR__
     ));
 }
+
+passthru(sprintf(
+    'php "%s/../bin/console" fos:elastica:populate --env=test --no-debug --no-interaction',
+    __DIR__
+));
+
+exit();
 
 require __DIR__.'/../vendor/autoload.php';

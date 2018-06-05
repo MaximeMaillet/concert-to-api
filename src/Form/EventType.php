@@ -5,6 +5,7 @@ namespace App\Form;
 
 use App\Entity\Event;
 use App\Entity\Location;
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -14,9 +15,24 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Intl\DateFormatter\IntlDateFormatter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class EventType extends AbstractType
 {
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
+
+    /**
+     * EventType constructor.
+     * @param $authorizationChecker
+     */
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -31,13 +47,15 @@ class EventType extends AbstractType
                 'class' => Location::class,
                 'choice_label' => 'id',
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('l')
-                        ->where('l.validated = 1')
-                        ->orderBy('l.name', 'ASC');
+                    if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
+                        return $er->createQueryBuilder('l')
+                            ->orderBy('l.name', 'ASC');
+                    } else {
+                        return $er->createQueryBuilder('l')
+                            ->where('l.validated = 1')
+                            ->orderBy('l.name', 'ASC');
+                    }
                 }
-            ])
-            ->add('artists', CollectionType::class, [
-                'entry_type' => ArtistType::class
             ])
         ;
     }

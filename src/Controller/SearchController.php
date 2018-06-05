@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\ElasticRepository\ArtistElasticRepository;
 use App\ElasticRepository\EventElasticRepository;
+use App\ElasticRepository\LocationElasticRepository;
 use App\Form\ArtistModelType;
 use App\Form\EventModelType;
+use App\Form\LocationModelType;
 use App\Model\ArtistModel;
 use App\Model\EventModel;
+use App\Model\LocationModel;
 use App\Traits\SerializerTrait;
 use FOS\RestBundle\Controller\FOSRestController;
 use Knp\Component\Pager\Paginator;
@@ -30,6 +33,11 @@ class SearchController extends FOSRestController
     protected $eventElasticRepository;
 
     /**
+     * @var LocationElasticRepository
+     */
+    protected $locationElasticRepository;
+
+    /**
      * @var PaginatorInterface
      */
     protected $paginator;
@@ -44,10 +52,12 @@ class SearchController extends FOSRestController
     public function __construct(
         ArtistElasticRepository $artistElasticRepository,
         EventElasticRepository $eventElasticRepository,
+        LocationElasticRepository $locationElasticRepository,
         PaginatorInterface $paginator
     ) {
         $this->artistElasticRepository = $artistElasticRepository;
         $this->eventElasticRepository = $eventElasticRepository;
+        $this->locationElasticRepository = $locationElasticRepository;
         $this->paginator = $paginator;
     }
 
@@ -108,6 +118,24 @@ class SearchController extends FOSRestController
 
     public function postSearchLocationsAction(Request $request)
     {
+        $locationModel = new LocationModel();
+        $form = $this->createForm(LocationModelType::class, $locationModel);
 
+        try {
+            $form->submit($request->request->all());
+        } catch(AlreadySubmittedException $e) {
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $summary = $this->locationElasticRepository->search($locationModel);
+            $results = $this->paginator->paginate($summary);
+
+            return $this->renderArray([
+                'results' => $this->normalize($results),
+                'pagination' => $results->getPaginationData()
+            ]);
+        }
+
+        return $this->renderFormErrors($form);
     }
 }

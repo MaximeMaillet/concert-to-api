@@ -19,7 +19,11 @@ fos_elastica:
             analyzer:
               my_analyzer:
                 tokenizer: "my_tokenizer"
-                filter: [ "lowercase" ]
+                filter: [ "lowercase", "custom_stop_words" ]
+            filter:
+              custom_stop_words:
+                type: "stop"
+                stopwords: ["Festival", "festival"]
       types:
         artist:
           properties:
@@ -43,7 +47,42 @@ fos_elastica:
             provider: ~
             listener: ~
             finder: ~
+        location:
+          properties:
+            name:
+              type: "text"
+              analyzer: my_analyzer
+            address:
+              type: "text"
+            postal_code:
+              type: "text"
+            city:
+              type: "text"
+            country:
+              type: "text"
+            location:
+              type: "geo_point"
+          persistence:
+            driver: orm
+            model: App\Entity\Location
+            provider: ~
+            listener: ~
+            finder: ~
 
+    appre:
+      client: default
+      settings:
+        index:
+          analysis:
+            analyzer:
+              my_analyzer:
+                tokenizer: "standard"
+                filter: [ "lowercase", "custom_stop_words" ]
+            filter:
+              custom_stop_words:
+                type: "stop"
+                stopwords: ["Festival", "festival"]
+      types:
         events:
           properties:
             id:
@@ -61,3 +100,4 @@ fos_elastica:
             provider: ~
             listener: ~
             finder: ~
+

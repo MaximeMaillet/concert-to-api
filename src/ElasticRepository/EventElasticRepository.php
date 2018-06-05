@@ -59,7 +59,7 @@ class EventElasticRepository
 
         $query->setQuery($boolQuery);
         $query->addSort(['_score' => ['order' => 'desc']]);
-        $query->setMinScore(1);
+        $query->setMinScore(0.5);
         return $query;
     }
 }

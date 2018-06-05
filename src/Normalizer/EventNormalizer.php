@@ -24,7 +24,7 @@ class EventNormalizer implements NormalizerInterface, DenormalizerInterface
             'id' => $object->getId(),
             'name' => $object->getName(),
             'hash' => $object->getHash(),
-            'location' => $object->getLocation(),
+            'location' => $object->getLocation()->getId(), //@todo
             'startDate' => $object->getStartDate() ? $object->getStartDate()->format(\DateTime::ATOM) : null,
             'endDate' => $object->getEndDate() ? $object->getEndDate()->format(\DateTime::ATOM) : null,
             'artists' => $artists,
