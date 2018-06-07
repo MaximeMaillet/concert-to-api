@@ -84,7 +84,7 @@ class SecurityController extends FOSRestController
             ->encode(
                 array_merge(
                     $this->normalize($user, ['auth']),
-                    ['exp' => time() + 3600]
+                    ['exp' => time()]
                 )
             );
 
@@ -123,7 +123,7 @@ class SecurityController extends FOSRestController
                 ->encode(
                     array_merge(
                         $this->normalize($user, ['auth']),
-                        ['exp' => time() + 3600]
+                        ['exp' => time()]
                     )
                 );
 
