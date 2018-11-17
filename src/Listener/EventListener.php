@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\Listener;
 
 use App\Entity\Event;
 use Doctrine\ORM\Event\LifecycleEventArgs;

@@ -11,6 +11,7 @@ use App\Form\LocationModelType;
 use App\Model\ArtistModel;
 use App\Model\EventModel;
 use App\Model\LocationModel;
+use App\Services\ScrapperService;
 use App\Traits\SerializerTrait;
 use FOS\ElasticaBundle\Configuration\ManagerInterface;
 use FOS\ElasticaBundle\Index\IndexManager;
@@ -44,14 +45,24 @@ class SearchController extends FOSRestController
      */
     protected $paginator;
 
+    /**
+     * @var IndexManager
+     */
+    protected $indexManager;
 
-    protected $manager;
+    /**
+     * @var ScrapperService
+     */
+    protected $scrapperService;
 
     /**
      * SearchController constructor.
      * @param ArtistElasticRepository $artistElasticRepository
      * @param EventElasticRepository $eventElasticRepository
+     * @param LocationElasticRepository $locationElasticRepository
      * @param Paginator|PaginatorInterface $paginator
+     * @param IndexManager $indexManager
+     * @param ScrapperService $scrapperService
      * @internal param EventElasticRepository $elasticRepository
      */
     public function __construct(
@@ -59,15 +70,21 @@ class SearchController extends FOSRestController
         EventElasticRepository $eventElasticRepository,
         LocationElasticRepository $locationElasticRepository,
         PaginatorInterface $paginator,
-        IndexManager $manager
+        IndexManager $indexManager,
+        ScrapperService $scrapperService
     ) {
         $this->artistElasticRepository = $artistElasticRepository;
         $this->eventElasticRepository = $eventElasticRepository;
         $this->locationElasticRepository = $locationElasticRepository;
         $this->paginator = $paginator;
-        $this->manager = $manager;
+        $this->indexManager = $indexManager;
+        $this->scrapperService = $scrapperService;
     }
 
+    /**
+     * @param Request $request
+     * @return array|bool|float|int|object|string|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function postSearchAction(Request $request)
     {
         $eventModel = new EventModel();
@@ -82,7 +99,7 @@ class SearchController extends FOSRestController
 
             $query = $this->eventElasticRepository->getEvents($eventModel);
 
-            $search = $this->manager->getIndex('global')->createSearch($query);
+            $search = $this->indexManager->getIndex('global')->createSearch($query);
             $search->addType('event');
             $search->addType('artist');
             $search->addType('location');
@@ -111,7 +128,8 @@ class SearchController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $summary = $this->artistElasticRepository->searchArtists($artistModel);
             $results = $this->paginator->paginate($summary);
-
+            $this->scrapperService->scrapArtist($artistModel->getName());
+            dump($artistModel->getName());
 
             return $this->renderArray([
                 'results' => $this->normalize($results),

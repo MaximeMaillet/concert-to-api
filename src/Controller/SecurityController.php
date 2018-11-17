@@ -8,6 +8,7 @@ use App\Services\UserService;
 use App\Traits\SerializerTrait;
 use FOS\RestBundle\Controller\FOSRestController;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,24 +34,24 @@ class SecurityController extends FOSRestController
     protected $passwordEncoder;
 
     /**
-     * @var JWTEncoderInterface
+     * @var JWTTokenManagerInterface
      */
-    protected $encoder;
+    protected $JWTTokenManager;
 
     /**
      * SecurityController constructor.
      * @param UserService $userService
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param JWTEncoderInterface $encoder
+     * @param JWTTokenManagerInterface $JWTTokenManager
      */
     public function __construct(
         UserService $userService,
         UserPasswordEncoderInterface $passwordEncoder,
-        JWTEncoderInterface $encoder
+        JWTTokenManagerInterface $JWTTokenManager
     ) {
         $this->userService = $userService;
         $this->passwordEncoder = $passwordEncoder;
-        $this->encoder = $encoder;
+        $this->JWTTokenManager = $JWTTokenManager;
     }
 
     /**
@@ -80,13 +81,7 @@ class SecurityController extends FOSRestController
             throw new BadCredentialsException();
         }
 
-        $token = $this->encoder
-            ->encode(
-                array_merge(
-                    $this->normalize($user, ['auth']),
-                    ['exp' => time()]
-                )
-            );
+        $token = $this->JWTTokenManager->create($user);
 
         return new JsonResponse(['token' => $token]);
     }
@@ -119,13 +114,7 @@ class SecurityController extends FOSRestController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $token = $this->encoder
-                ->encode(
-                    array_merge(
-                        $this->normalize($user, ['auth']),
-                        ['exp' => time()]
-                    )
-                );
+            $token = $this->JWTTokenManager->create($user);
 
             return new JsonResponse([
                 'token' => $token,

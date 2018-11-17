@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     fields={"email"},
  *     errorPath="email",
  *     message="This email is already use",
+ *     groups={"creation"}
  * )
  */
 class User implements AdvancedUserInterface, \Serializable
@@ -46,8 +47,8 @@ class User implements AdvancedUserInterface, \Serializable
 
     /**
      * @var string
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
+     * @Assert\NotBlank(groups={"creation"})
+     * @Assert\NotNull(groups={"creation"})
      */
     protected $plainPassword;
 
@@ -171,6 +172,10 @@ class User implements AdvancedUserInterface, \Serializable
         return in_array($role, $this->roles, true);
     }
 
+    /**
+     * @param $role
+     * @return $this
+     */
     public function addRole($role)
     {
         if (!in_array($role, $this->roles, true)) {
@@ -338,6 +343,10 @@ class User implements AdvancedUserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @param $password
+     * @return $this
+     */
     public function setPassword($password)
     {
         $this->password = $password;

@@ -6,6 +6,7 @@
         "ext-iconv": "*",
         "friendsofsymfony/elastica-bundle": "^5.0",
         "friendsofsymfony/rest-bundle": "^2.3",
+        "guzzlehttp/guzzle": "^6.3",
         "knplabs/knp-paginator-bundle": "^2.8",
         "lexik/jwt-authentication-bundle": "^2.6",
         "nelmio/cors-bundle": "^1.5",

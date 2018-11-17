@@ -134,6 +134,12 @@ class ArtistController extends FOSRestController
         return $this->renderBoolean(true);
     }
 
+    /**
+     * @param Request $request
+     * @param Artist $artist
+     * @param Event $event
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function putArtistsEventsAction(Request $request, Artist $artist, Event $event)
     {
         $artist->addEvent($event);
