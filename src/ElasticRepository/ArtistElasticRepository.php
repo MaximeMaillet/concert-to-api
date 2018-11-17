@@ -22,6 +22,10 @@ class ArtistElasticRepository
         $this->finder = $finder;
     }
 
+    /**
+     * @param ArtistModel $artistModel
+     * @return \FOS\ElasticaBundle\Paginator\PaginatorAdapterInterface|\FOS\ElasticaBundle\Paginator\TransformedPaginatorAdapter
+     */
     public function searchArtists(ArtistModel $artistModel)
     {
         return $this->finder->createPaginatorAdapter(
@@ -29,26 +33,16 @@ class ArtistElasticRepository
         );
     }
 
+    /**
+     * @param ArtistModel $artistModel
+     * @return Query
+     */
     protected function getArtists(ArtistModel $artistModel)
     {
         $query = new Query();
-        $mustQueries = [];
-        $shouldQueries = [];
-
-        $mustQueries = array_merge($mustQueries, $this->addBaseQueries($artistModel));
-
-        if (null !== $artistModel->getName()) {
-            $mustQueries = array_merge($mustQueries, [new Query\Match('name', $artistModel->getName())]);
-        }
-
         $boolQuery = new Query\BoolQuery();
-        if (count($mustQueries) > 0) {
-            $boolQuery->addMust($mustQueries);
-        }
 
-        if (count($shouldQueries) > 0) {
-            $boolQuery->addShould($shouldQueries);
-        }
+        $this->addBaseQueries($boolQuery, $artistModel);
 
         $query->setQuery($boolQuery);
         $query->addSort(['_score' => ['order' => 'desc']]);
@@ -56,17 +50,13 @@ class ArtistElasticRepository
     }
 
     /**
+     * @param Query|Query\BoolQuery $query
      * @param ArtistModel $artistModel
-     * @return array
      */
-    protected function addBaseQueries(ArtistModel $artistModel)
+    protected function addBaseQueries(Query\BoolQuery $query, ArtistModel $artistModel)
     {
-        $queries = [];
-        if (!$artistModel->isFromScrapper()) {
-            //@todo
-//            $queries[] = new Query\Term(['validated' => $artistModel->isValidated()]);
+        if (null !== $artistModel->getName()) {
+            $query->addMust(new Query\Match('name', $artistModel->getName()));
         }
-
-        return $queries;
     }
 }

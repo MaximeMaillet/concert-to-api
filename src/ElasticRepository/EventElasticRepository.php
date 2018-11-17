@@ -29,7 +29,7 @@ class EventElasticRepository
         );
     }
 
-    protected function getEvents(EventModel $eventModel)
+    public function getEvents(EventModel $eventModel)
     {
         $query = new Query();
         $mustQueries = [];

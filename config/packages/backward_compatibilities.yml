@@ -5,7 +5,7 @@ services:
 
   App\ElasticRepository\EventElasticRepository:
     arguments:
-      - '@fos_elastica.finder.appre.events'
+      - '@fos_elastica.finder.app.event'
 
   App\ElasticRepository\LocationElasticRepository:
     arguments:

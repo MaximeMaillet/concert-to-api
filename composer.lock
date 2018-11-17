@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "32d2d9162600c9d1a1794940a2e0d5d6",
+    "content-hash": "e224544c983c7bd51cfaa3d01bc7856a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1567,37 +1567,96 @@
             "time": "2018-05-16T12:15:58+00:00"
         },
         {
-            "name": "lexik/jwt-authentication-bundle",
-            "version": "v2.4.4",
+            "name": "lcobucci/jwt",
+            "version": "3.2.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
-                "reference": "bcb8e2a658cc0ca3cc6949edf1c9b84ed4aa1277"
+                "url": "https://github.com/lcobucci/jwt.git",
+                "reference": "82be04b4753f8b7693b62852b7eab30f97524f9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/bcb8e2a658cc0ca3cc6949edf1c9b84ed4aa1277",
-                "reference": "bcb8e2a658cc0ca3cc6949edf1c9b84ed4aa1277",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/82be04b4753f8b7693b62852b7eab30f97524f9b",
+                "reference": "82be04b4753f8b7693b62852b7eab30f97524f9b",
                 "shasum": ""
             },
             "require": {
-                "namshi/jose": "^7.2",
-                "php": "^5.5|^7.0",
-                "symfony/console": "^2.8|^3.0|^4.0",
-                "symfony/framework-bundle": "^2.8|^3.0|^4.0",
-                "symfony/security-bundle": "^2.8|^3.0|^4.0"
+                "ext-openssl": "*",
+                "php": ">=5.5"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^1.1|^2.8@dev",
-                "lcobucci/jwt": "~3.2",
-                "symfony/browser-kit": "^2.8|^3.0|^4.0",
-                "symfony/dom-crawler": "^2.8|^3.0|^4.0",
-                "symfony/phpunit-bridge": "~3.3",
-                "symfony/yaml": "^2.8|^3.0|^4.0"
+                "mdanter/ecc": "~0.3.1",
+                "mikey179/vfsstream": "~1.5",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/php-invoker": "~1.1",
+                "phpunit/phpunit": "~4.5",
+                "squizlabs/php_codesniffer": "~2.3"
+            },
+            "suggest": {
+                "mdanter/ecc": "Required to use Elliptic Curves based algorithms."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Lcobucci\\JWT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Luís Otávio Cobucci Oblonczyk",
+                    "email": "lcobucci@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to work with JSON Web Token and JSON Web Signature",
+            "keywords": [
+                "JWS",
+                "jwt"
+            ],
+            "time": "2018-11-11T12:22:26+00:00"
+        },
+        {
+            "name": "lexik/jwt-authentication-bundle",
+            "version": "v2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
+                "reference": "dc10bb43a8c9fef24edbc9d6fab8cf40d575a903"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/dc10bb43a8c9fef24edbc9d6fab8cf40d575a903",
+                "reference": "dc10bb43a8c9fef24edbc9d6fab8cf40d575a903",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "lcobucci/jwt": "^3.2",
+                "namshi/jose": "^7.2",
+                "php": "^5.5|^7.0",
+                "symfony/framework-bundle": "^3.4|^4.0",
+                "symfony/security-bundle": "^3.4|^4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.1|^2.8",
+                "symfony/browser-kit": "^3.4|^4.0",
+                "symfony/console": "^3.4|^4.0",
+                "symfony/dom-crawler": "^3.4|^4.0",
+                "symfony/phpunit-bridge": "^3.4|^4.0",
+                "symfony/var-dumper": "^3.4|^4.0",
+                "symfony/yaml": "^3.4|^4.0"
             },
             "suggest": {
                 "gesdinet/jwt-refresh-token-bundle": "Implements a refresh token system over Json Web Tokens in Symfony",
-                "lcobucci/jwt": "For using the LcobucciJWTEncoder",
                 "spomky-labs/lexik-jose-bridge": "Provides a JWT Token encoder with encryption support"
             },
             "type": "symfony-bundle",
@@ -1660,7 +1719,7 @@
                 "rest",
                 "symfony"
             ],
-            "time": "2018-03-06T12:23:17+00:00"
+            "time": "2018-11-01T14:48:31+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -3943,6 +4002,7 @@
             ],
             "description": "Enforces Long Term Supported versions of Symfony components",
             "homepage": "https://symfony.com",
+            "abandoned": "symfony/flex",
             "time": "2017-10-19T02:16:32+00:00"
         },
         {

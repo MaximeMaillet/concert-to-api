@@ -12,6 +12,8 @@ use App\Model\ArtistModel;
 use App\Model\EventModel;
 use App\Model\LocationModel;
 use App\Traits\SerializerTrait;
+use FOS\ElasticaBundle\Configuration\ManagerInterface;
+use FOS\ElasticaBundle\Index\IndexManager;
 use FOS\RestBundle\Controller\FOSRestController;
 use Knp\Component\Pager\Paginator;
 use Knp\Component\Pager\PaginatorInterface;
@@ -42,6 +44,9 @@ class SearchController extends FOSRestController
      */
     protected $paginator;
 
+
+    protected $manager;
+
     /**
      * SearchController constructor.
      * @param ArtistElasticRepository $artistElasticRepository
@@ -53,12 +58,40 @@ class SearchController extends FOSRestController
         ArtistElasticRepository $artistElasticRepository,
         EventElasticRepository $eventElasticRepository,
         LocationElasticRepository $locationElasticRepository,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
+        IndexManager $manager
     ) {
         $this->artistElasticRepository = $artistElasticRepository;
         $this->eventElasticRepository = $eventElasticRepository;
         $this->locationElasticRepository = $locationElasticRepository;
         $this->paginator = $paginator;
+        $this->manager = $manager;
+    }
+
+    public function postSearchAction(Request $request)
+    {
+        $eventModel = new EventModel();
+        $form = $this->createForm(EventModelType::class, $eventModel);
+
+        try {
+            $form->submit($request->request->all());
+        } catch(AlreadySubmittedException $e) {
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $query = $this->eventElasticRepository->getEvents($eventModel);
+
+            $search = $this->manager->getIndex('global')->createSearch($query);
+            $search->addType('event');
+            $search->addType('artist');
+            $search->addType('location');
+
+            $res = $search->search()->getResults();
+            return $this->normalize($res);
+        }
+
+        return $this->renderFormErrors($form);
     }
 
     /**
@@ -68,7 +101,7 @@ class SearchController extends FOSRestController
     public function postSearchArtistsAction(Request $request)
     {
         $artistModel = new ArtistModel();
-        $form = $this->createForm(ArtistModelType::class, $artistModel);
+        $form = $this->createForm(ArtistModelType::class, $artistModel, ['method' => 'POST']);
 
         try {
             $form->submit($request->request->all());
