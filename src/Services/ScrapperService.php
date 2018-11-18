@@ -74,6 +74,16 @@ class ScrapperService
         } catch(\Exception $e) {}
     }
 
+    public function scrapEvent($name, $startDate)
+    {
+        try {
+            $this->send('POST', '/scrap/artists', [
+                'name' => $name,
+                'start_date' => $startDate
+            ]);
+        } catch(\Exception $exception) {}
+    }
+
     /**
      * @param $method
      * @param $endpoint

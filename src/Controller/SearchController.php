@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\ElasticRepository\ArtistElasticRepository;
 use App\ElasticRepository\EventElasticRepository;
 use App\ElasticRepository\LocationElasticRepository;
+use App\Entity\User;
 use App\Form\ArtistModelType;
 use App\Form\EventModelType;
 use App\Form\LocationModelType;
@@ -128,8 +129,9 @@ class SearchController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $summary = $this->artistElasticRepository->searchArtists($artistModel);
             $results = $this->paginator->paginate($summary);
-            $this->scrapperService->scrapArtist($artistModel->getName());
-            dump($artistModel->getName());
+            if(!$this->isGranted(User::ROLE_SCRAPPER)) {
+                $this->scrapperService->scrapArtist($artistModel->getName());
+            }
 
             return $this->renderArray([
                 'results' => $this->normalize($results),
@@ -157,6 +159,9 @@ class SearchController extends FOSRestController
         if ($form->isSubmitted() && $form->isValid()) {
             $summary = $this->eventElasticRepository->searchEvent($eventModel);
             $results = $this->paginator->paginate($summary);
+            if(!$this->isGranted(User::ROLE_SCRAPPER)) {
+                $this->scrapperService->scrapEvent($eventModel->getName(), $eventModel->getStartDate());
+            }
 
             return $this->renderArray([
                 'results' => $this->normalize($results),

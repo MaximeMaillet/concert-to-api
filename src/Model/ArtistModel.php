@@ -21,14 +21,14 @@ class ArtistModel
     /**
      * @var bool
      */
-    protected $fromScrapper;
+    protected $exact;
 
     /**
      * ArtistModel constructor.
      */
     public function __construct()
     {
-        $this->fromScrapper = false;
+        $this->exact = true;
         $this->validated = true;
     }
 
@@ -51,7 +51,7 @@ class ArtistModel
     /**
      * @return bool
      */
-    public function isValidated()
+    public function isValidated(): bool
     {
         return $this->validated;
     }
@@ -59,7 +59,7 @@ class ArtistModel
     /**
      * @param bool $validated
      */
-    public function setValidated($validated)
+    public function setValidated(bool $validated)
     {
         $this->validated = $validated;
     }
@@ -67,16 +67,19 @@ class ArtistModel
     /**
      * @return bool
      */
-    public function isFromScrapper()
+    public function isExact(): bool
     {
-        return $this->fromScrapper;
+        return $this->exact;
     }
 
     /**
-     * @param bool $fromScrapper
+     * @param bool $exact
+     * @return $this
      */
-    public function setFromScrapper($fromScrapper)
+    public function setExact(bool $exact)
     {
-        $this->fromScrapper = $fromScrapper;
+        $this->exact = $exact;
+
+        return $this;
     }
 }

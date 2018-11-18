@@ -29,17 +29,23 @@ class EventModelType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('name')
-            ->add('startDate', DateTimeType::class, [
-                'widget' => 'single_text'
-            ])
-            ->add('endDate')
-            ->add('fromScrapper')
-        ;
+        if ($this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {
+            $builder->add('exact', null, [
+                'empty_data' => true,
+            ]);
+            $builder->add('hash');
+        } else {
+            $builder
+                ->add('name')
+                ->add('startDate', DateTimeType::class, [
+                    'widget' => 'single_text'
+                ])
+                ->add('endDate')
+            ;
 
-        if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
-            // @todo validated
+            if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
+                // @todo validated
+            }
         }
     }
 

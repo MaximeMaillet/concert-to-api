@@ -47,7 +47,7 @@ class EventType extends AbstractType
                 'class' => Location::class,
                 'choice_label' => 'id',
                 'query_builder' => function (EntityRepository $er) {
-                    if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
+                    if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN) || $this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {
                         return $er->createQueryBuilder('l')
                             ->orderBy('l.name', 'ASC');
                     } else {

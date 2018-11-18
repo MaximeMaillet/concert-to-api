@@ -166,12 +166,12 @@ class Artist
         /** @var Event $i */
         for($i=0;$i<count($eventArray); $i++) {
             if($eventArray[$i]->getHash() === $event->getHash()) {
-                $isContain = true;
+//                $isContain = true;
             }
         }
 
         if ($isContain) {
-            $this->events->removeElement($event);
+//            $this->events->removeElement($event);
         }
 
         return $this;

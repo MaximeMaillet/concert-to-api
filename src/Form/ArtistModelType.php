@@ -25,13 +25,17 @@ class ArtistModelType extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name')
-            ->add('fromScrapper')
         ;
+
+        if ($this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {
+            $builder->add('exact', null, [
+                'empty_data' => true,
+            ]);
+        }
 
         if ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
             $builder->add('validated', null, [

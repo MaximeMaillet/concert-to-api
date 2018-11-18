@@ -1,12 +1,16 @@
 services:
   App\ElasticRepository\ArtistElasticRepository:
+    autowire: true
     arguments:
       - '@fos_elastica.finder.app.artist'
+      - '@fos_elastica.finder.scrapper.artist'
 
   App\ElasticRepository\EventElasticRepository:
+    autowire: true
     arguments:
       - '@fos_elastica.finder.app.event'
+      - '@fos_elastica.finder.scrapper.event'
 
   App\ElasticRepository\LocationElasticRepository:
     arguments:
-      - '@fos_elastica.finder.app.location'
+      $finder: '@fos_elastica.finder.app.location'

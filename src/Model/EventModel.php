@@ -25,9 +25,14 @@ class EventModel
     protected $endDate;
 
     /**
-     * @var bool|null
+     * @var bool
      */
-    protected $fromScrapper;
+    protected $exact = false;
+
+    /**
+     * @var string|null
+     */
+    protected $hash;
 
     /**
      * @return int|null
@@ -94,18 +99,34 @@ class EventModel
     }
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getFromScrapper()
+    public function isExact(): bool
     {
-        return $this->fromScrapper;
+        return $this->exact;
     }
 
     /**
-     * @param bool|null $fromScrapper
+     * @param bool $exact
      */
-    public function setFromScrapper($fromScrapper)
+    public function setExact(bool $exact)
     {
-        $this->fromScrapper = $fromScrapper;
+        $this->exact = $exact;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param null|string $hash
+     */
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
     }
 }

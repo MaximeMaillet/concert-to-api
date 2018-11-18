@@ -3,86 +3,6 @@ fos_elastica:
   clients:
     default: { host: '%env(ELASTIC_HOST)%', port: '%env(ELASTIC_PORT)%' }
   indexes:
-    global:
-      client: default
-      settings:
-        index:
-          analysis:
-            tokenizer:
-              my_tokenizer:
-                type: "edge_ngram"
-                min_gram: 4
-                max_gram: 12
-                token_chars:
-                  - 'letter'
-                  - 'digit'
-            analyzer:
-              my_analyzer:
-                tokenizer: "my_tokenizer"
-                filter: [ "lowercase", "custom_stop_words" ]
-            filter:
-              custom_stop_words:
-                type: "stop"
-                stopwords: ["Festival", "festival"]
-      types:
-        artist:
-          properties:
-            id:
-              type: "integer"
-            name:
-              type: "text"
-              analyzer: my_analyzer
-            validated:
-              type: "boolean"
-            events:
-              type: "nested"
-              properties:
-                id:
-                  type: "integer"
-                name:
-                  type: "text"
-          persistence:
-            driver: orm
-            model: App\Entity\Artist
-            provider: ~
-            listener: ~
-            finder: ~
-        location:
-          properties:
-            name:
-              type: "text"
-              analyzer: my_analyzer
-            address:
-              type: "text"
-            postal_code:
-              type: "text"
-            city:
-              type: "text"
-            country:
-              type: "text"
-            location:
-              type: "geo_point"
-          persistence:
-            driver: orm
-            model: App\Entity\Location
-            provider: ~
-            listener: ~
-            finder: ~
-        event:
-          properties:
-            name:
-              type: "text"
-              analyzer: my_analyzer
-            startDate:
-              type: "date"
-            endDate:
-              type: "date"
-          persistence:
-            driver: orm
-            model: App\Entity\Event
-            provider: ~
-            listener: ~
-            finder: ~
     app:
       client: default
       settings:
@@ -121,6 +41,7 @@ fos_elastica:
                   type: "integer"
                 name:
                   type: "text"
+                  analyzer: my_analyzer
           persistence:
             driver: orm
             model: App\Entity\Artist
@@ -163,27 +84,51 @@ fos_elastica:
             provider: ~
             listener: ~
             finder: ~
-    appre:
+    scrapper:
       client: default
       settings:
         index:
           analysis:
             analyzer:
-              my_analyzer:
-                tokenizer: "standard"
-                filter: [ "lowercase", "custom_stop_words" ]
+              simple:
+                type: 'custom'
+                tokenizer: 'keyword'
+                filter: ['lowercase', 'custom_stop_words']
             filter:
               custom_stop_words:
                 type: "stop"
                 stopwords: ["Festival", "festival"]
       types:
-        events:
+        artist:
           properties:
             id:
               type: "integer"
             name:
               type: "text"
-              analyzer: my_analyzer
+              analyzer: simple
+            validated:
+              type: "boolean"
+            events:
+              type: "nested"
+              properties:
+                id:
+                  type: "integer"
+                name:
+                  type: "text"
+                  analyzer: simple
+          persistence:
+            driver: orm
+            model: App\Entity\Artist
+            provider: ~
+            listener: ~
+            finder: ~
+        event:
+          properties:
+            name:
+              type: "text"
+              analyzer: simple
+            hash:
+              type: "keyword"
             startDate:
               type: "date"
             endDate:

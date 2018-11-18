@@ -2,24 +2,44 @@
 
 namespace App\ElasticRepository;
 
+use App\Entity\Artist;
+use App\Entity\User;
 use App\Model\ArtistModel;
 use Elastica\Query;
 use FOS\ElasticaBundle\Finder\TransformedFinder;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ArtistElasticRepository
 {
     /**
      * @var TransformedFinder
      */
-    protected $finder;
+    protected $appFinder;
+
+    /**
+     * @var TransformedFinder
+     */
+    protected $scrapperFinder;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
 
     /**
      * ArtistElasticRepository constructor.
-     * @param TransformedFinder $finder
+     * @param TransformedFinder $appFinder
+     * @param TransformedFinder $scrapperFinder
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(TransformedFinder $finder)
-    {
-        $this->finder = $finder;
+    public function __construct(
+        TransformedFinder $appFinder,
+        TransformedFinder $scrapperFinder,
+        AuthorizationCheckerInterface $authorizationChecker
+    ) {
+        $this->appFinder = $appFinder;
+        $this->scrapperFinder =$scrapperFinder;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -28,9 +48,16 @@ class ArtistElasticRepository
      */
     public function searchArtists(ArtistModel $artistModel)
     {
-        return $this->finder->createPaginatorAdapter(
-            $this->getArtists($artistModel)
-        );
+        if($this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {
+            return $this->scrapperFinder->createPaginatorAdapter(
+                $this->getArtists($artistModel)
+            );
+        } else {
+            dump('FDP');
+            return $this->appFinder->createPaginatorAdapter(
+                $this->getArtists($artistModel)
+            );
+        }
     }
 
     /**
@@ -42,7 +69,13 @@ class ArtistElasticRepository
         $query = new Query();
         $boolQuery = new Query\BoolQuery();
 
-        $this->addBaseQueries($boolQuery, $artistModel);
+        if ($this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {
+            $this->addScrapperQueries($boolQuery, $artistModel);
+        } elseif ($this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
+            $this->addAdminQueries($boolQuery, $artistModel);
+        } else {
+            $this->addUserQueries($boolQuery, $artistModel);
+        }
 
         $query->setQuery($boolQuery);
         $query->addSort(['_score' => ['order' => 'desc']]);
@@ -53,9 +86,38 @@ class ArtistElasticRepository
      * @param Query|Query\BoolQuery $query
      * @param ArtistModel $artistModel
      */
-    protected function addBaseQueries(Query\BoolQuery $query, ArtistModel $artistModel)
+    protected function addAdminQueries(Query\BoolQuery $query, ArtistModel $artistModel)
     {
         if (null !== $artistModel->getName()) {
+            $query->addMust(new Query\Match('name', $artistModel->getName()));
+        }
+    }
+
+    /**
+     * @param Query\BoolQuery $query
+     * @param ArtistModel $artistModel
+     */
+    protected function addUserQueries(Query\BoolQuery $query, ArtistModel $artistModel)
+    {
+        $query->addMust(new Query\Term(['validated' => true]));
+        if (null !== $artistModel->getName()) {
+            $query->addMust(new Query\Match('name', $artistModel->getName()));
+        }
+    }
+
+    /**
+     * @param Query\BoolQuery $query
+     * @param ArtistModel $artistModel
+     */
+    protected function addScrapperQueries(Query\BoolQuery $query, ArtistModel $artistModel)
+    {
+        if (null === $artistModel->getName()) {
+            return;
+        }
+
+        if($artistModel->isExact()) {
+            $query->addMust(new Query\Term(['name' => $artistModel->getName()]));
+        } else {
             $query->addMust(new Query\Match('name', $artistModel->getName()));
         }
     }

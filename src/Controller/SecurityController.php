@@ -66,24 +66,29 @@ class SecurityController extends FOSRestController
         } catch(AlreadySubmittedException $e) {
         }
 
-        $user = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->getActiveUserFromEmail($form->getData()->getEmail());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $user = $this->getDoctrine()
+                ->getRepository(User::class)
+                ->getActiveUserFromEmail($data->getEmail());
 
-        if (!$user) {
-            throw $this->createNotFoundException();
+            if (!$user) {
+                throw $this->createNotFoundException();
+            }
+
+            $isValid = $this->passwordEncoder
+                ->isPasswordValid($user, $request->request->get('password'));
+
+            if (!$isValid) {
+                throw new BadCredentialsException();
+            }
+
+            $token = $this->JWTTokenManager->create($user);
+
+            return new JsonResponse(['token' => $token]);
         }
 
-        $isValid = $this->passwordEncoder
-            ->isPasswordValid($user, $request->request->get('password'));
-
-        if (!$isValid) {
-            throw new BadCredentialsException();
-        }
-
-        $token = $this->JWTTokenManager->create($user);
-
-        return new JsonResponse(['token' => $token]);
+        return $this->renderFormErrors($form);
     }
 
     /**
