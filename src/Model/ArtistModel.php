@@ -8,6 +8,19 @@ namespace App\Model;
  */
 class ArtistModel
 {
+    public const DEFAULT_LIMIT = 20;
+    public const DEFAULT_PAGE = 1;
+
+    /**
+     * @var int
+     */
+    protected $page;
+
+    /**
+     * @var int
+     */
+    protected $limit;
+
     /**
      * @var string|null
      */
@@ -28,8 +41,10 @@ class ArtistModel
      */
     public function __construct()
     {
-        $this->exact = true;
+        $this->exact = false;
         $this->validated = true;
+        $this->limit = self::DEFAULT_LIMIT;
+        $this->page = self::DEFAULT_PAGE;
     }
 
     /**
@@ -80,6 +95,42 @@ class ArtistModel
     {
         $this->exact = $exact;
 
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param int $page
+     * @return ArtistModel
+     */
+    public function setPage(int $page): ArtistModel
+    {
+        $this->page = $page;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     * @return ArtistModel
+     */
+    public function setLimit(int $limit): ArtistModel
+    {
+        $this->limit = $limit;
         return $this;
     }
 }

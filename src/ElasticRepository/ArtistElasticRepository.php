@@ -53,7 +53,6 @@ class ArtistElasticRepository
                 $this->getArtists($artistModel)
             );
         } else {
-            dump('FDP');
             return $this->appFinder->createPaginatorAdapter(
                 $this->getArtists($artistModel)
             );
@@ -78,6 +77,8 @@ class ArtistElasticRepository
         }
 
         $query->setQuery($boolQuery);
+//        $query->setSize($artistModel->getLimit());
+        $query->setFrom($artistModel->getPage());
         $query->addSort(['_score' => ['order' => 'desc']]);
         return $query;
     }
@@ -89,7 +90,9 @@ class ArtistElasticRepository
     protected function addAdminQueries(Query\BoolQuery $query, ArtistModel $artistModel)
     {
         if (null !== $artistModel->getName()) {
-            $query->addMust(new Query\Match('name', $artistModel->getName()));
+            $query->addMust(
+                (new Query\MatchPhrase('name', $artistModel->getName()))
+            );
         }
     }
 
@@ -101,7 +104,9 @@ class ArtistElasticRepository
     {
         $query->addMust(new Query\Term(['validated' => true]));
         if (null !== $artistModel->getName()) {
-            $query->addMust(new Query\Match('name', $artistModel->getName()));
+            $query->addMust(
+                (new Query\MatchPhrase('name', $artistModel->getName()))
+            );
         }
     }
 

@@ -128,7 +128,11 @@ class SearchController extends FOSRestController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $summary = $this->artistElasticRepository->searchArtists($artistModel);
-            $results = $this->paginator->paginate($summary);
+            $results = $this->paginator->paginate(
+                $summary,
+                $artistModel->getPage(),
+                $artistModel->getLimit()
+            );
             if(!$this->isGranted(User::ROLE_SCRAPPER)) {
                 $this->scrapperService->scrapArtist($artistModel->getName());
             }

@@ -29,6 +29,12 @@ class ArtistModelType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('page', null, [
+                'empty_data' => ArtistModel::DEFAULT_PAGE,
+            ])
+            ->add('limit', null, [
+                'empty_data' => ArtistModel::DEFAULT_LIMIT,
+            ])
         ;
 
         if ($this->authorizationChecker->isGranted(User::ROLE_SCRAPPER)) {

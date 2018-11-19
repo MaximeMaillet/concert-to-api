@@ -100,6 +100,7 @@ class SecurityController extends FOSRestController
         $form = $this->createForm(UserType::class, null, [
             'method' => 'POST',
             'creation' => true,
+            'validation_groups' => ['creation'],
         ]);
 
         try {

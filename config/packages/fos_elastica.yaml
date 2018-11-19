@@ -11,7 +11,7 @@ fos_elastica:
             tokenizer:
               my_tokenizer:
                 type: "edge_ngram"
-                min_gram: 4
+                min_gram: 2
                 max_gram: 12
                 token_chars:
                   - 'letter'

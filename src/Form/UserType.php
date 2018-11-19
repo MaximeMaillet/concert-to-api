@@ -19,7 +19,7 @@ class UserType extends AbstractType
             ->add('isActive', CheckboxType::class)
         ;
 
-        if($options && array_key_exists('creation', $options) && $options['creation']) {
+        if($options && $options['validation_groups'] && in_array('creation', $options['validation_groups'])) {
             $builder->add('plainPassword', PasswordType::class);
         }
     }
