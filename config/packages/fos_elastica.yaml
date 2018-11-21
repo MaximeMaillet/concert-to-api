@@ -34,6 +34,8 @@ fos_elastica:
               analyzer: my_analyzer
             validated:
               type: "boolean"
+            count_events:
+              type: "integer"
             events:
               type: "nested"
               properties:
@@ -108,6 +110,8 @@ fos_elastica:
               analyzer: simple
             validated:
               type: "boolean"
+            count_events:
+              type: "integer"
             events:
               type: "nested"
               properties:

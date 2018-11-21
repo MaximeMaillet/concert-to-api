@@ -115,7 +115,7 @@ class SecurityController extends FOSRestController
             $user->setPassword($password);
 
             //@todo
-            //$user->addRole(User::ROLE_ADMIN);
+//            $user->setRole([User::ROLE_SCRAPPER]);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();

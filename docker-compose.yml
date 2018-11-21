@@ -1,9 +1,13 @@
 # docker-compose.yml
 version: '3'
 
+volumes:
+  api-volume:
+
 services:
   db:
     image: mariadb:10.3.6
+    restart: always
     volumes:
       - ${STORAGE_PATH}/mariadb:/var/lib/mysql
     environment:
@@ -14,36 +18,38 @@ services:
 
   elastic:
     image: elasticsearch:5
-    volumes:
-      - ${STORAGE_PATH}/elastic:/usr/share/elasticsearch/data
+    restart: always
 
-  app:
-    image: deuxmax/concert-to-api:latest
-    env_file: .env
+  api:
+    image: deuxmax/concerto-api:latest
+    restart: always
+    env_file: .env.app.prod
     links:
       - db
       - elastic
     volumes:
       - ./Docker/php/www.prod.conf:/etc/php/7.1/fpm/pool.d/www.conf:ro
+      - api-volume:/var/app
 
   nginx:
     image: nginx:1.13
     ports:
-      - 8090:80
+      - 8088:80
     links:
-      - app
+      - api
     volumes:
       - ./Docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./Docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./Docker/nginx/conf.d/site.prod.conf:/etc/nginx/conf.d/default.conf
+      - api-volume:/var/app
 
   scrapper:
-    image: deuxmax/concert-to-scrapper:latest
+    image: deuxmax/concerto-scrapper:latest
     links:
-      - nginx
+      - redis
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      CONCERTO_URL: 'http://nginx/api'
+      CONCERTO_URL: 'http://app/api'
 
   redis:
     image: redis:3.2

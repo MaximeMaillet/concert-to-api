@@ -3,7 +3,6 @@
 namespace App\Security;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
@@ -153,7 +152,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
         $email = $data['email'];
         return $this->em
             ->getRepository(User::class)
-            ->findOneBy(['email' => $email]);
+            ->getActiveUserFromEmail($email);
     }
 
     /**

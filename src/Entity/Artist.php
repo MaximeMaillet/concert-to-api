@@ -124,6 +124,15 @@ class Artist
     }
 
     /**
+     * For ES
+     * @return int
+     */
+    public function getCountEvents()
+    {
+        return $this->events->count();
+    }
+
+    /**
      * @param mixed $events
      * @return Artist
      */

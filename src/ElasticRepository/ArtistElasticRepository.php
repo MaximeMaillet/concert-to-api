@@ -77,9 +77,11 @@ class ArtistElasticRepository
         }
 
         $query->setQuery($boolQuery);
-//        $query->setSize($artistModel->getLimit());
         $query->setFrom($artistModel->getPage());
-        $query->addSort(['_score' => ['order' => 'desc']]);
+        $query->addSort([
+            '_score' => ['order' => 'desc'],
+            'count_events' => ['order' => 'desc']
+        ]);
         return $query;
     }
 

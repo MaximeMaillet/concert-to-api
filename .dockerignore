@@ -1,0 +1,16 @@
+.data
+Docker
+.env
+.gitignore
+.git
+package.json
+phpunit.xml
+phpunit.xml.dist
+README.md
+symfony.lock
+Dockerfile
+docker-compose.dev.yml
+docker-compose.yml
+.env.dist
+var/cache/
+var/log/

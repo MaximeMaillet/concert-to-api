@@ -13,4 +13,5 @@ class ApiService
     const API_GROUP_NO_AUTH = 'noauth';
     const API_GROUP_AUTH = 'auth';
     const API_GROUP_ADMIN = 'admin';
+    const API_GROUP_SCRAPPER = 'scrapper';
 }

@@ -3,7 +3,6 @@ security:
         App\Entity\User: bcrypt
 
     role_hierarchy:
-        ROLE_SCRAPPER: ROLE_USER
         ROLE_ADMIN: ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
@@ -25,10 +24,18 @@ security:
             guard:
                 authenticators:
                     - App\Security\JwtTokenAuthenticator
+        scrap:
+            pattern: ^/scrap/
+            anonymous: true
+            stateless: true
+            guard:
+                authenticators:
+                    - App\Security\ApiKeyAuthenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/authenticate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/scrap, roles: ROLE_SCRAPPER }
         - { path: ^/admin, roles: ROLE_ADMIN }

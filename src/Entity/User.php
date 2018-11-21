@@ -73,6 +73,13 @@ class User implements AdvancedUserInterface, \Serializable
     protected $roles;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @Groups({"scrapper"})
+     */
+    protected $token;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -80,6 +87,7 @@ class User implements AdvancedUserInterface, \Serializable
         $this->roles = array('ROLE_USER');
         $this->isActive = false;
         $this->salt = md5(uniqid(null, true).time());
+        $this->token = md5($this->salt.uniqid(null, true));
     }
 
     /**
@@ -182,6 +190,17 @@ class User implements AdvancedUserInterface, \Serializable
         if (!in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param array $roles
+     * @return $this
+     */
+    public function setRole(array $roles)
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -353,5 +372,21 @@ class User implements AdvancedUserInterface, \Serializable
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
     }
 }

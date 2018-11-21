@@ -30,3 +30,9 @@ search:
   type: rest
   prefix: api
   resource: App\Controller\SearchController
+
+scrap_search:
+  type: rest
+  prefix: scrap
+  name_prefix: _scrap
+  resource: App\Controller\SearchController
